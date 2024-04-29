@@ -33,7 +33,9 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -70,14 +72,31 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.common.api.Response;
 import com.google.android.ump.ConsentForm;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.ConsentRequestParameters;
 import com.google.android.ump.FormError;
 import com.google.android.ump.UserMessagingPlatform;
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.collect.ImmutableList;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpResponse;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.HttpClient;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.HttpGet;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -94,8 +113,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean adDebug = true;
 
     // ui
-    private ImageView splashScreen;
-    private RelativeLayout rootView, contentView;
+    private RelativeLayout rootView, contentView, splashScreen;
+    private EditText question;
+    private Button questionButton;
+    private TextView answer;
 
     // Ads
     private ImageView bottomBanner;
@@ -194,6 +215,60 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void sendQuestion() {
+        String questionText = question.getText().toString();
+        if (!questionText.isEmpty()) {
+            hideKeyboard();
+
+            String queryURL = "https://api.calorieninjas.com/v1/nutrition?query=" + questionText + "&X-Api-Key=TgFfSH3VsxyNdR3Hger92A==It0gCuSjAYjSyGuS";
+
+            try {
+                URL url = new URL(queryURL);
+                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setDoOutput(true);
+
+                String response = "";
+                String line = "";
+                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuilder stringBuilder = new StringBuilder();
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(line).append("\n");
+                }
+                response = stringBuilder.toString();
+
+                inputStreamReader.close();
+                bufferedReader.close();
+                connection.disconnect();
+
+                answer.setText(response);
+
+            } catch (Exception e) {
+                System.out.println(TAG + "{publishToTheServer} " + e.getMessage());
+                answer.setText("{publishToTheServer} " + e.getMessage());
+            }
+        }
+    }
+
+    private void hideKeyboard() {
+        try {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        } catch (Exception e) {
+            System.out.println(TAG + "{hideKeyboard} " + e.getMessage());
+        }
+    }
+
+    private void showKeyboard() {
+        try {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        } catch (Exception e) {
+            System.out.println(TAG + "{showNoteInput} " + e.getMessage());
+        }
+    }
+
     // ui
 
     private void assignViews() {
@@ -212,6 +287,10 @@ public class MainActivity extends AppCompatActivity {
 
         buttonBuySubscription = findViewById(R.id.button_buy_subscription);
         buttonSubscriptionClose = findViewById(R.id.button_subscription_close);
+
+        question = findViewById(R.id.question);
+        questionButton = findViewById(R.id.question_button);
+        answer = findViewById(R.id.answer);
     }
 
     private void assignViewListeners() {
@@ -251,6 +330,13 @@ public class MainActivity extends AppCompatActivity {
                 }, 1000);
                 refreshAppUI(true);
                 startSubscribeFlow();
+            }
+        });
+
+        questionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendQuestion();
             }
         });
     }
