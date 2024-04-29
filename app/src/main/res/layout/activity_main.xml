@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:id="@+id/root_view" >
+
+    <ImageView
+        android:id="@+id/bottom_banner"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/banner"
+        android:scaleType="centerCrop" />
+
+    <RelativeLayout
+        android:id="@+id/content_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="70dp">
+
+        <ImageButton
+            android:id="@+id/button_no_ads"
+            android:layout_width="@dimen/button_size"
+            android:layout_height="@dimen/button_size"
+            android:src="@drawable/no_ads"
+            android:scaleType="fitCenter"
+            android:background="@color/transparent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="@dimen/button_margin"
+            android:layout_marginBottom="@dimen/button_bottom_margin"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/text_no_more_ads"
+            android:layout_width="@dimen/button_text_width"
+            android:layout_height="wrap_content"
+            android:text="@string/text_no_ads"
+            android:textStyle="bold"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/button_text"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="@dimen/button_text_bottom_margin"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/online_card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/card_bg"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/card_margin"
+                android:layout_marginEnd="@dimen/card_margin"
+                android:layout_marginTop="@dimen/card_margin"
+                android:paddingTop="@dimen/card_padding_vertical"
+                android:paddingBottom="@dimen/card_padding_vertical"
+                android:paddingStart="@dimen/card_padding_horizontal"
+                android:paddingEnd="@dimen/card_padding_horizontal"
+                android:background="@drawable/card_white"
+                android:orientation="vertical"
+                android:elevation="@dimen/elevation" >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/card_image_height"
+                    android:layout_marginBottom="@dimen/card_image_margin"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/offline" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/offline_title"
+                    android:textSize="@dimen/card_title"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="@dimen/card_title_margin"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/card_text"
+                    android:text="@string/offline_text"
+                    android:textColor="@color/grey_text"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/subscription_card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/card_bg"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/button_subscription_close"
+                android:layout_width="@dimen/button_size_little"
+                android:layout_height="@dimen/button_size_little"
+                android:src="@drawable/close"
+                android:paddingTop="@dimen/button_margin_little"
+                android:paddingEnd="@dimen/button_margin_little"
+                android:scaleType="fitCenter"
+                android:background="@color/transparent"
+                android:layout_gravity="end"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/card_margin"
+                android:layout_marginEnd="@dimen/card_margin"
+                android:paddingTop="@dimen/card_padding_vertical"
+                android:paddingBottom="@dimen/card_padding_vertical"
+                android:paddingStart="@dimen/card_padding_horizontal"
+                android:paddingEnd="@dimen/card_padding_horizontal"
+                android:background="@drawable/card_white"
+                android:orientation="vertical"
+                android:elevation="@dimen/elevation" >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/card_image_height"
+                    android:layout_marginBottom="@dimen/card_image_margin"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/no_ads_card" />
+
+                <TextView
+                    android:id="@+id/subscription_card_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/subscription_title"
+                    android:textSize="@dimen/card_title"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="@dimen/card_title_margin"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/card_text"
+                    android:text="@string/subscription_text"
+                    android:textColor="@color/grey_text"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/card_subtitle"
+                    android:text="@string/subscription_benefits_title"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/card_title_margin"
+                    android:textColor="@color/grey_text_subtitle"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/card_text"
+                    android:text="@string/subscription_benefits"
+                    android:lineSpacingMultiplier="1.5"
+                    android:layout_marginTop="@dimen/card_title_margin"
+                    android:textColor="@color/grey_text"/>
+
+                <Button
+                    android:id="@+id/button_buy_subscription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/subscription_button"
+                    android:textAllCaps="false"
+                    android:background="@drawable/button_blue"
+                    android:layout_marginTop="@dimen/card_button_margin"
+                    android:layout_gravity="center"
+                    android:paddingStart="@dimen/card_button_padding"
+                    android:paddingEnd="@dimen/card_button_padding"
+                    android:textColor="@color/white"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/splash_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/loading_screen_bg"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:src="@drawable/awesome_robot"
+            android:scaleType="fitCenter"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="25dp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/logo"
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            android:paddingBottom="150dp"
+            android:scaleType="fitCenter" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

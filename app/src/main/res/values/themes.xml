@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.HowManyCalories" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+    </style>
+
+    <style name="Theme.HowManyCalories" parent="Base.Theme.HowManyCalories" />
+</resources>
