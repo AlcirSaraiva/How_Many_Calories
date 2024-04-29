@@ -85,6 +85,9 @@ import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.m
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -163,8 +166,6 @@ public class MainActivity extends AppCompatActivity {
         assignViews();
         assignViewListeners();
 
-        question.setText("potato");
-
         showBottomBanner();
 
         final Handler handler = new Handler();
@@ -232,17 +233,34 @@ public class MainActivity extends AppCompatActivity {
                     .addHeader("X-Api-Key","TgFfSH3VsxyNdR3Hger92A==It0gCuSjAYjSyGuS")
                     .build();
 
-            try (Response response = client.newCall(request).execute()) {
+            try {
+                Response response = client.newCall(request).execute();
+                String tempResponse = "";
                 if (response.isSuccessful()) {
                     String responseBody = response.body().string();
+                    JSONObject jObject = new JSONObject(responseBody);
+                    JSONArray jArray = jObject.getJSONArray("items");
+                    JSONObject item;
                     answer.setText(responseBody);
-                } else {
-                    answer.setText(response.toString());
+
+                    for (int i = 0; i < jArray.length(); i ++) {
+                        item = jArray.getJSONObject(i);
+                        String itemName = item.getString("name");
+                        String calories = item.getString("calories");
+                        String serving = item.getString("serving_size_g");
+
+                        tempResponse += itemName + ": " + calories + " kcal / " + serving + " g\n";
+                    }
+
+                    answer.setText(tempResponse);
                 }
-            } catch (IOException e) {
+
+            } catch (Exception e) {
                 System.out.println(TAG + "{publishToTheServer} " + e.getMessage());
                 answer.setText("{publishToTheServer} " + e.getMessage());
             }
+        } else {
+            answer.setText("empty :(");
         }
     }
 
