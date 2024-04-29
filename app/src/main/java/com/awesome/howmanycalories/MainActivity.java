@@ -162,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
         displayMetrics = context.getResources().getDisplayMetrics();
         prepareNetwork();
 
-        // prepares UI
         assignViews();
         assignViewListeners();
 
@@ -219,63 +218,6 @@ public class MainActivity extends AppCompatActivity {
             rootView.removeView(mAdView);
             mAdView = null;
             setContentViewMargin(0);
-        }
-    }
-
-    private void sendQuestion() {
-        String questionText = question.getText().toString();
-        if (!questionText.isEmpty()) {
-            hideKeyboard();
-
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url("https://api.calorieninjas.com/v1/nutrition?query=" + questionText)
-                    .addHeader("X-Api-Key","TgFfSH3VsxyNdR3Hger92A==It0gCuSjAYjSyGuS")
-                    .build();
-
-            try {
-                Response response = client.newCall(request).execute();
-                String tempResponse = "";
-                if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    JSONObject jObject = new JSONObject(responseBody);
-                    JSONArray jArray = jObject.getJSONArray("items");
-                    JSONObject item;
-                    answer.setText(responseBody);
-
-                    for (int i = 0; i < jArray.length(); i ++) {
-                        item = jArray.getJSONObject(i);
-                        String itemName = item.getString("name");
-                        String calories = item.getString("calories");
-                        String serving = item.getString("serving_size_g");
-
-                        /*
-                          sugar_g
-                          fiber_g
-                          serving_size_g
-                          sodium_mg
-                          name
-                          potassium_mg
-                          fat_saturated_g
-                          fat_total_g
-                          calories
-                          cholesterol_mg
-                          protein_g
-                          carbohydrates_total_g
-                         */
-
-                        tempResponse += itemName + ": " + calories + " kcal / " + serving + " g\n";
-                    }
-
-                    answer.setText(tempResponse);
-                }
-
-            } catch (Exception e) {
-                System.out.println(TAG + "{publishToTheServer} " + e.getMessage());
-                answer.setText("{publishToTheServer} " + e.getMessage());
-            }
-        } else {
-            answer.setText("empty :(");
         }
     }
 
@@ -453,6 +395,78 @@ public class MainActivity extends AppCompatActivity {
             isAvailable = true;
         }
         return isAvailable;
+    }
+
+    private void sendQuestion() {
+        String questionText = question.getText().toString();
+        if (!questionText.isEmpty()) {
+            hideKeyboard();
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url("https://api.calorieninjas.com/v1/nutrition?query=" + questionText)
+                    .addHeader("X-Api-Key","TgFfSH3VsxyNdR3Hger92A==It0gCuSjAYjSyGuS")
+                    .build();
+
+            try {
+                Response response = client.newCall(request).execute();
+                String tempResponse = "";
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    JSONObject jObject = new JSONObject(responseBody);
+                    JSONArray jArray = jObject.getJSONArray("items");
+                    JSONObject item;
+                    answer.setText(responseBody);
+
+                    for (int i = 0; i < jArray.length(); i ++) {
+                        item = jArray.getJSONObject(i);
+                        String itemName = item.getString("name");
+                        String calories = item.getString("calories");
+                        String serving = item.getString("serving_size_g");
+
+                        /*
+                          sugar_g
+                          fiber_g
+                          serving_size_g
+                          sodium_mg
+                          name
+                          potassium_mg
+                          fat_saturated_g
+                          fat_total_g
+                          calories
+                          cholesterol_mg
+                          protein_g
+                          carbohydrates_total_g
+                         */
+
+                        tempResponse += itemName + ": " + calories + " kcal / " + serving + " g\n";
+                    }
+                    answer.setText(tempResponse);
+                } else {
+                    answer.setText(response.body().string());
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            answer.setText(getText(R.string.answer));
+                        }
+                    }, 5000);
+                }
+            } catch (Exception e) {
+                System.out.println(TAG + "{publishToTheServer} " + e.getMessage());
+                answer.setText("{publishToTheServer} " + e.getMessage());
+
+            }
+        } else {
+            answer.setText(getText(R.string.empty));
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    answer.setText(getText(R.string.answer));
+                }
+            }, 1000);
+        }
     }
 
     // Ads

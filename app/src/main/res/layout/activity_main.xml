@@ -30,7 +30,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Enter the food or dish"
+                android:text="@string/question"
                 android:textColor="@color/black"/>
 
             <EditText
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:minHeight="45dp"
-                android:hint="query here"
+                android:hint="@string/question_hint"
                 android:inputType="text|textCapSentences"
                 android:gravity="start"
                 android:textColorHint="#666"
@@ -52,7 +52,7 @@
                 android:id="@+id/question_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="How many calories?"
+                android:text="@string/question_button"
                 android:textAllCaps="false"
                 android:layout_marginTop="10dp"/>
 
@@ -64,7 +64,7 @@
                 android:padding="10dp"
                 android:background="@color/black"
                 android:textColor="@color/white"
-                android:text="answer will show here"/>
+                android:text="@string/answer"/>
 
         </LinearLayout>
 
