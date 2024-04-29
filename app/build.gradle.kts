@@ -33,6 +33,7 @@ dependencies {
     implementation(libs.consent.library)
     implementation(libs.billing)
     implementation(libs.firebase.crashlytics.buildtools)
+    implementation(libs.okhttp)
 
     implementation(libs.appcompat)
     implementation(libs.material)

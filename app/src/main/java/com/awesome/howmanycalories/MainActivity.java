@@ -72,7 +72,6 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.google.android.gms.common.api.Response;
 import com.google.android.ump.ConsentForm;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.ConsentRequestParameters;
@@ -82,6 +81,7 @@ import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.collec
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpResponse;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.HttpClient;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.HttpGet;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.HttpPost;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils;
 
@@ -97,6 +97,10 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -159,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
         assignViews();
         assignViewListeners();
 
+        question.setText("potato");
+
         showBottomBanner();
 
         final Handler handler = new Handler();
@@ -220,31 +226,20 @@ public class MainActivity extends AppCompatActivity {
         if (!questionText.isEmpty()) {
             hideKeyboard();
 
-            String queryURL = "https://api.calorieninjas.com/v1/nutrition?query=" + questionText + "&X-Api-Key=TgFfSH3VsxyNdR3Hger92A==It0gCuSjAYjSyGuS";
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url("https://api.calorieninjas.com/v1/nutrition?query=" + questionText)
+                    .addHeader("X-Api-Key","TgFfSH3VsxyNdR3Hger92A==It0gCuSjAYjSyGuS")
+                    .build();
 
-            try {
-                URL url = new URL(queryURL);
-                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setDoOutput(true);
-
-                String response = "";
-                String line = "";
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                StringBuilder stringBuilder = new StringBuilder();
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(line).append("\n");
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    answer.setText(responseBody);
+                } else {
+                    answer.setText(response.toString());
                 }
-                response = stringBuilder.toString();
-
-                inputStreamReader.close();
-                bufferedReader.close();
-                connection.disconnect();
-
-                answer.setText(response);
-
-            } catch (Exception e) {
+            } catch (IOException e) {
                 System.out.println(TAG + "{publishToTheServer} " + e.getMessage());
                 answer.setText("{publishToTheServer} " + e.getMessage());
             }
