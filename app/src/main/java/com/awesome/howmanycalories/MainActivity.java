@@ -249,6 +249,21 @@ public class MainActivity extends AppCompatActivity {
                         String calories = item.getString("calories");
                         String serving = item.getString("serving_size_g");
 
+                        /*
+                          sugar_g
+                          fiber_g
+                          serving_size_g
+                          sodium_mg
+                          name
+                          potassium_mg
+                          fat_saturated_g
+                          fat_total_g
+                          calories
+                          cholesterol_mg
+                          protein_g
+                          carbohydrates_total_g
+                         */
+
                         tempResponse += itemName + ": " + calories + " kcal / " + serving + " g\n";
                     }
 
