@@ -14,5 +14,8 @@
     <color name="secondary">#e0e6f9</color>
     <color name="alert">#f00</color>
 
+    <color name="flame_out">#eb5569</color>
+    <color name="flame_in">#ffb299</color>
+
     <color name="red_awesome">#eb1923</color>
 </resources>

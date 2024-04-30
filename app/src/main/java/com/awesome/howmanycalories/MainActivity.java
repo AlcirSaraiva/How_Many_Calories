@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                 };
                 threadCycleHandler.postDelayed(threadCycleRunnable, threadCycleInterval);
             }
-        }, 1000);
+        }, 2000);
     }
 
     private void threadCycle() {
@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
         questionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendQuestion();
+                queryCalories();
             }
         });
     }
@@ -397,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
         return isAvailable;
     }
 
-    private void sendQuestion() {
+    private void queryCalories() {
         String questionText = question.getText().toString();
         if (!questionText.isEmpty()) {
             hideKeyboard();

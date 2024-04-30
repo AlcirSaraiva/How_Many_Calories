@@ -3,13 +3,5 @@
     android:height="108dp"
     android:viewportWidth="768"
     android:viewportHeight="768">
-  <group android:scaleX="0.6"
-      android:scaleY="0.6"
-      android:translateX="153.6"
-      android:translateY="153.6">
-    <path
-        android:pathData="m762.35,384c0,208.94 -169.43,378.37 -378.37,378.37C175.04,762.37 5.65,592.94 5.65,384 5.65,175.06 175.04,5.63 383.98,5.63c208.94,0 378.37,169.43 378.37,378.37"
-        android:fillColor="@color/black"
-        android:fillType="nonZero"/>
-  </group>
+
 </vector>
