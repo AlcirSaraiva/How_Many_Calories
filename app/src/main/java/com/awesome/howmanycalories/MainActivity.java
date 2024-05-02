@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     // ui
     private RelativeLayout rootView, contentView, splashScreen;
     private EditText question;
-    private Button questionButton;
+    private ImageButton questionButton;
     private TextView answer;
 
     // Ads
