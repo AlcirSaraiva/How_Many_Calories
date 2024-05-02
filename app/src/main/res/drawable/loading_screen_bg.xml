@@ -13,7 +13,7 @@
           android:gradientRadius="160.96"
           android:type="radial">
         <item android:offset="0" android:color="#FFF3F3F3"/>
-        <item android:offset="1" android:color="#FFCCD4F4"/>
+        <item android:offset="1" android:color="#FFCDC6CD"/>
       </gradient>
     </aapt:attr>
   </path>
