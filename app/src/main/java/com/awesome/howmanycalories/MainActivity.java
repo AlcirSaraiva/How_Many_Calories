@@ -284,7 +284,6 @@ public class MainActivity extends AppCompatActivity {
             if (convertView == null) view = inflater.inflate(R.layout.answer_list, null, true);
 
             try {
-
                 sugarTitle = findViewById(R.id.answer_item_1);
                 fiberTitle = findViewById(R.id.answer_item_2);
                 sodiumTitle = findViewById(R.id.answer_item_3);
@@ -356,16 +355,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void buildAnswer() {
-        hideKeyboard();
         AnswerListAdapter answerListAdapter = new AnswerListAdapter(applicationContext, nameArray, caloriesArray, servingArray, sugarArray, fiberArray, sodiumArray, potassiumArray, saturatedArray, totalArray, cholesterolArray, carbohydratesArray, proteinArray);
         answerListView.setAdapter(answerListAdapter);
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                answerListView.smoothScrollToPosition(0);
-            }
-        }, 2000);
     }
 
     // ui
@@ -514,6 +505,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void queryCalories() {
         String questionText = question.getText().toString();
+        hideKeyboard();
         if (!questionText.isEmpty()) {
             hideKeyboard();
 
