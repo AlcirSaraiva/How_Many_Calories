@@ -21,7 +21,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
+import android.media.metrics.Event;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -29,16 +32,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -90,6 +98,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -97,6 +106,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -110,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
     // system
     private Context context;
     private Activity activityContext;
+    private MainActivity applicationContext;
     private Handler threadCycleHandler = new Handler();
     private Runnable threadCycleRunnable;
     private int threadCycleInterval = 300;
@@ -118,12 +130,14 @@ public class MainActivity extends AppCompatActivity {
     private DisplayMetrics displayMetrics;
     private String TAG = "AppTag: ";
     private boolean adDebug = true;
+    private String[] nameArray, caloriesArray, servingArray, sugarArray, fiberArray, sodiumArray, potassiumArray, saturatedArray, totalArray, cholesterolArray, carbohydratesArray, proteinArray;
 
     // ui
     private RelativeLayout rootView, contentView, splashScreen;
     private EditText question;
     private ImageButton questionButton;
-    private TextView answer;
+    private ListView answerListView;
+    private Typeface typeRegular;
 
     // Ads
     private ImageView bottomBanner;
@@ -149,8 +163,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFullVersion = false;
     private LinearLayout onlineCard, subscriptionCard;
     private Button buttonBuySubscription;
-    private ImageButton buttonNoAds, buttonSubscriptionClose;
-    private TextView noMoreAdsText, subscriptionCardTitle;
+    private ImageButton buttonSubscriptionClose;
+    private TextView subscriptionCardTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,12 +172,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = this;
+        applicationContext = this;
         activityContext = MainActivity.this;
         displayMetrics = context.getResources().getDisplayMetrics();
         prepareNetwork();
 
         assignViews();
         assignViewListeners();
+        assignFonts();
 
         showBottomBanner();
 
@@ -209,8 +225,6 @@ public class MainActivity extends AppCompatActivity {
         // when full version on start
         if (fullVersionUpdateUI) {
             fullVersionUpdateUI = false;
-            buttonNoAds.setImageResource(R.drawable.subscriptions);
-            noMoreAdsText.setText(getString(R.string.text_manage_subscription));
             setContentViewMargin(0);
         }
         // when full version after purchase
@@ -239,6 +253,121 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public class AnswerListAdapter extends ArrayAdapter {
+        private Activity activityContext;
+        private String[] name, calories, serving, sugar, fiber, sodium, potassium, saturated, total, cholesterol, carbohydrates, protein;
+        private TextView sugarTitle, fiberTitle, sodiumTitle, potassiumTitle, saturatedTitle, totalTitle, cholesterolTitle, carbohydratesTitle, proteinTitle, subscribeTitle;
+        private TextView nameValue, caloriesValue, servingValue, sugarValue, fiberValue, sodiumValue, potassiumValue, saturatedValue, totalValue, cholesterolValue, carbohydratesValue, proteinValue;
+        private Button saveButton;
+
+        public AnswerListAdapter(@NonNull Activity activityContext, String[] name, String[] calories, String[] serving, String[] sugar, String[] fiber, String[] sodium, String[] potassium, String[] saturated, String[] total, String[] cholesterol, String[] carbohydrates, String[] protein) {
+            super(activityContext, R.layout.answer_list, name);
+            this.activityContext = activityContext;
+            this.name = name;
+            this.calories = calories;
+            this.serving = serving;
+            this.sugar = sugar;
+            this.fiber = fiber;
+            this.sodium = sodium;
+            this.potassium = potassium;
+            this.saturated = saturated;
+            this.total = total;
+            this.cholesterol = cholesterol;
+            this.carbohydrates = carbohydrates;
+            this.protein = protein;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = convertView;
+            LayoutInflater inflater = activityContext.getLayoutInflater();
+            if (convertView == null) view = inflater.inflate(R.layout.answer_list, null, true);
+
+            try {
+
+                sugarTitle = findViewById(R.id.answer_item_1);
+                fiberTitle = findViewById(R.id.answer_item_2);
+                sodiumTitle = findViewById(R.id.answer_item_3);
+                potassiumTitle = findViewById(R.id.answer_item_4);
+                saturatedTitle = findViewById(R.id.answer_item_5);
+                totalTitle = findViewById(R.id.answer_item_6);
+                cholesterolTitle = findViewById(R.id.answer_item_7);
+                carbohydratesTitle = findViewById(R.id.answer_item_8);
+                proteinTitle = findViewById(R.id.answer_item_9);
+                subscribeTitle = findViewById(R.id.answer_subscribe);
+                nameValue = findViewById(R.id.answer_name);
+                caloriesValue = findViewById(R.id.answer_calories);
+                servingValue = findViewById(R.id.answer_serving);
+                sugarValue = findViewById(R.id.answer_sugar);
+                fiberValue = findViewById(R.id.answer_fiber);
+                sodiumValue = findViewById(R.id.answer_sodium);
+                potassiumValue = findViewById(R.id.answer_potassium);
+                saturatedValue = findViewById(R.id.answer_saturated);
+                totalValue = findViewById(R.id.answer_total);
+                cholesterolValue = findViewById(R.id.answer_cholesterol);
+                carbohydratesValue = findViewById(R.id.answer_carbohydrated);
+                proteinValue = findViewById(R.id.answer_protein);
+                saveButton = findViewById(R.id.answer_save_button);
+
+                sugarTitle.setTypeface(typeRegular);
+                fiberTitle.setTypeface(typeRegular);
+                sodiumTitle.setTypeface(typeRegular);
+                potassiumTitle.setTypeface(typeRegular);
+                saturatedTitle.setTypeface(typeRegular);
+                totalTitle.setTypeface(typeRegular);
+                cholesterolTitle.setTypeface(typeRegular);
+                carbohydratesTitle.setTypeface(typeRegular);
+                proteinTitle.setTypeface(typeRegular);
+                subscribeTitle.setTypeface(typeRegular);
+                nameValue.setTypeface(typeRegular);
+                caloriesValue.setTypeface(typeRegular);
+                servingValue.setTypeface(typeRegular);
+                sugarValue.setTypeface(typeRegular);
+                fiberValue.setTypeface(typeRegular);
+                sodiumValue.setTypeface(typeRegular);
+                potassiumValue.setTypeface(typeRegular);
+                saturatedValue.setTypeface(typeRegular);
+                totalValue.setTypeface(typeRegular);
+                cholesterolValue.setTypeface(typeRegular);
+                carbohydratesValue.setTypeface(typeRegular);
+                proteinValue.setTypeface(typeRegular);
+                saveButton.setTypeface(typeRegular);
+
+                if (!showAds) subscribeTitle.setText("");
+                nameValue.setText(name[position]);
+                caloriesValue.setText(calories[position]);
+                servingValue.setText(serving[position]);
+                sugarValue.setText(sugar[position]);
+                fiberValue.setText(fiber[position]);
+                sodiumValue.setText(sodium[position]);
+                potassiumValue.setText(potassium[position]);
+                saturatedValue.setText(saturated[position]);
+                totalValue.setText(total[position]);
+                cholesterolValue.setText(cholesterol[position]);
+                carbohydratesValue.setText(carbohydrates[position]);
+                proteinValue.setText(protein[position]);
+
+            } catch (Exception e) {
+                System.out.println(TAG + e.getMessage());
+            }
+
+            return view;
+        }
+    }
+
+    public void buildAnswer() {
+        hideKeyboard();
+        AnswerListAdapter answerListAdapter = new AnswerListAdapter(applicationContext, nameArray, caloriesArray, servingArray, sugarArray, fiberArray, sodiumArray, potassiumArray, saturatedArray, totalArray, cholesterolArray, carbohydratesArray, proteinArray);
+        answerListView.setAdapter(answerListAdapter);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                answerListView.smoothScrollToPosition(0);
+            }
+        }, 2000);
+    }
+
     // ui
 
     private void assignViews() {
@@ -252,35 +381,22 @@ public class MainActivity extends AppCompatActivity {
         subscriptionCard = findViewById(R.id.subscription_card);
         subscriptionCardTitle = findViewById(R.id.subscription_card_title);
 
-        buttonNoAds = findViewById(R.id.button_no_ads);
-        noMoreAdsText = findViewById(R.id.text_no_more_ads);
-
         buttonBuySubscription = findViewById(R.id.button_buy_subscription);
         buttonSubscriptionClose = findViewById(R.id.button_subscription_close);
 
         question = findViewById(R.id.question);
         questionButton = findViewById(R.id.question_button);
-        answer = findViewById(R.id.answer);
+
+        answerListView = findViewById(R.id.answer_list_view);
     }
 
     private void assignViewListeners() {
-        buttonNoAds.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (showAds) {
-                    if (formattedPrice != null && subscriptionCardTitle != null) {
-                        subscriptionCardTitle.setText(getString(R.string.subscription_title) + " · " + formattedPrice);
-                    }
-                    refreshAppUI(false);
-                    subscriptionCard.setVisibility(View.VISIBLE);
-                } else {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
+        /* show subscriptions
+        Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse("https://play.google.com/store/account/subscriptions"));
                     intent.setPackage("com.android.vending");
                     startActivity(intent);
-                }
-            }
-        });
+         */
         buttonSubscriptionClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -311,18 +427,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void assignFonts() {
+        typeRegular = Typeface.createFromAsset(getAssets(), "regular.ttf");
+    }
+
     private void refreshAppUI(boolean showUI) {
         if (showUI) {
             if (onlineCard != null) {
                 if (onlineCard.getVisibility() != View.VISIBLE) {
-                    if (buttonNoAds != null) buttonNoAds.setVisibility(View.VISIBLE);
-                    if (noMoreAdsText != null) noMoreAdsText.setVisibility(View.VISIBLE);
                     initSubscriptions();
                 }
             }
-        } else {
-            if (buttonNoAds != null) buttonNoAds.setVisibility(View.GONE);
-            if (noMoreAdsText != null) noMoreAdsText.setVisibility(View.GONE);
         }
     }
 
@@ -410,13 +525,24 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 Response response = client.newCall(request).execute();
-                String tempResponse = "";
                 if (response.isSuccessful()) {
                     String responseBody = response.body().string();
                     JSONObject jObject = new JSONObject(responseBody);
                     JSONArray jArray = jObject.getJSONArray("items");
                     JSONObject item;
-                    answer.setText(responseBody);
+
+                    nameArray = new String[jArray.length()];
+                    caloriesArray = new String[jArray.length()];
+                    servingArray = new String[jArray.length()];
+                    sugarArray = new String[jArray.length()];
+                    fiberArray = new String[jArray.length()];
+                    sodiumArray = new String[jArray.length()];
+                    potassiumArray = new String[jArray.length()];
+                    saturatedArray = new String[jArray.length()];
+                    totalArray = new String[jArray.length()];
+                    cholesterolArray = new String[jArray.length()];
+                    carbohydratesArray = new String[jArray.length()];
+                    proteinArray = new String[jArray.length()];
 
                     for (int i = 0; i < jArray.length(); i ++) {
                         item = jArray.getJSONObject(i);
@@ -424,48 +550,30 @@ public class MainActivity extends AppCompatActivity {
                         String calories = item.getString("calories");
                         String serving = item.getString("serving_size_g");
 
-                        /*
-                          sugar_g
-                          fiber_g
-                          serving_size_g
-                          sodium_mg
-                          name
-                          potassium_mg
-                          fat_saturated_g
-                          fat_total_g
-                          calories
-                          cholesterol_mg
-                          protein_g
-                          carbohydrates_total_g
-                         */
-
-                        tempResponse += itemName + ": " + calories + " kcal / " + serving + " g\n";
+                        nameArray[i] = item.getString("name");
+                        caloriesArray[i] = item.getString("calories");
+                        servingArray[i] = item.getString("serving_size_g");
+                        sugarArray[i] = item.getString("sugar_g");
+                        fiberArray[i] = item.getString("fiber_g");
+                        sodiumArray[i] = item.getString("sodium_mg");
+                        potassiumArray[i] = item.getString("potassium_mg");
+                        saturatedArray[i] = item.getString("fat_saturated_g");
+                        totalArray[i] = item.getString("fat_total_g");
+                        cholesterolArray[i] = item.getString("cholesterol_mg");
+                        carbohydratesArray[i] = item.getString("carbohydrates_total_g");
+                        proteinArray[i] = item.getString("protein_g");
                     }
-                    answer.setText(tempResponse);
+
+                    buildAnswer();
                 } else {
-                    answer.setText(response.body().string());
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            answer.setText(getText(R.string.answer));
-                        }
-                    }, 5000);
+
                 }
             } catch (Exception e) {
                 System.out.println(TAG + "{publishToTheServer} " + e.getMessage());
-                answer.setText("{publishToTheServer} " + e.getMessage());
 
             }
         } else {
-            answer.setText(getText(R.string.empty));
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    answer.setText(getText(R.string.answer));
-                }
-            }, 1000);
+
         }
     }
 

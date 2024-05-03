@@ -20,7 +20,7 @@
     <dimen name="card_button_margin">40dp</dimen>
     <dimen name="card_button_padding">30dp</dimen>
     <dimen name="card_corners">20dp</dimen>
-    <dimen name="button_corners">30dp</dimen>
+    <dimen name="button_corners">10dp</dimen>
     <dimen name="button_second_margin">115dp</dimen>
     <dimen name="button_third_margin">210dp</dimen>
     <dimen name="button_help_margin">90dp</dimen>
@@ -34,5 +34,9 @@
 
     <dimen name="text_size_1">14sp</dimen>
     <dimen name="margin_little">10dp</dimen>
+    <dimen name="margin_answer_card">15dp</dimen>
+    <dimen name="name_size_answer_card">28sp</dimen>
+    <dimen name="info_size_answer_card">16sp</dimen>
+    <dimen name="subscribe_size_answer_card">14sp</dimen>
 
 </resources>

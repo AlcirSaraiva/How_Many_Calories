@@ -7,7 +7,7 @@
     <color name="card_bg">#e6eaf9</color>
     <color name="grey_text">#595959</color>
     <color name="grey_text_subtitle">#666</color>
-    <color name="grey_button_text">#444</color>
+    <color name="grey_button_text">#bfbfbf</color>
     <color name="grey_50">#808080</color>
 
     <color name="primary">#5d7a8a</color>

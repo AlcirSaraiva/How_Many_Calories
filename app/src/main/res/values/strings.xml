@@ -17,4 +17,17 @@
     <string name="question_button">How many calories?</string>
     <string name="answer">answer will show here</string>
     <string name="empty">Empty field :-(</string>
+
+    <string name="serving">Serving size:&#160;&#160;*</string>
+    <string name="sugar">Sugar&#160;&#160;</string>
+    <string name="fiber">Fiber&#160;&#160;</string>
+    <string name="sodium">Sodium&#160;&#160;</string>
+    <string name="potassium">Potassium&#160;&#160;</string>
+    <string name="saturated">Saturated fat&#160;&#160;</string>
+    <string name="total">Total fat&#160;&#160;</string>
+    <string name="cholesterol">Cholesterol&#160;&#160;</string>
+    <string name="carbohydrates">Carbohydrates&#160;&#160;</string>
+    <string name="protein">Protein&#160;&#160;</string>
+    <string name="dots">.........................................................................................</string>
+    <string name="no_value">&#160;&#160;*</string>
 </resources>
