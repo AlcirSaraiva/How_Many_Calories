@@ -10,37 +10,35 @@
         android:orientation="vertical"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/answer_bg"
-        android:layout_marginTop="@dimen/margin_answer_card"
-        android:layout_marginStart="@dimen/margin_answer_card"
-        android:layout_marginEnd="@dimen/margin_answer_card">
+        android:layout_marginTop="@dimen/margin_answer_card_vertical"
+        android:layout_marginBottom="@dimen/margin_answer_card_vertical"
+        android:layout_marginStart="@dimen/margin_answer_card_horizontal"
+        android:layout_marginEnd="@dimen/margin_answer_card_horizontal">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/answer_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="20dp"
-            android:weightSum="3">
+            android:textColor="@color/black"
+            android:paddingTop="30dp"
+            android:paddingBottom="10dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:textSize="@dimen/name_size_answer_card"
+            android:gravity="center"
+            android:lines="1"
+            android:ellipsize="end" />
 
-            <TextView
-                android:id="@+id/answer_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="@dimen/name_size_answer_card"
-                android:layout_weight="2"
-                android:lines="1"
-                android:ellipsize="end"/>
-
-            <TextView
-                android:id="@+id/answer_calories"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:textColor="@color/black"
-                android:textSize="@dimen/name_size_answer_card"
-                android:layout_weight="1"/>
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/answer_calories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/calories_size_answer_card"/>
 
         <TextView
             android:id="@+id/answer_serving"
@@ -48,303 +46,52 @@
             android:layout_height="wrap_content"
             android:text="@string/serving"
             android:gravity="end"
-            android:paddingEnd="20dp"
+            android:paddingEnd="60dp"
             android:textColor="@color/grey_text"
             android:textSize="@dimen/info_size_answer_card" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dots"
-                    android:lines="1"
-                    android:ellipsize="none"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dots"
-                    android:lines="1"
-                    android:ellipsize="none"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dots"
-                    android:lines="1"
-                    android:ellipsize="none"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dots"
-                    android:lines="1"
-                    android:ellipsize="none"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dots"
-                    android:lines="1"
-                    android:ellipsize="none"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dots"
-                    android:lines="1"
-                    android:ellipsize="none"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dots"
-                    android:lines="1"
-                    android:ellipsize="none"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dots"
-                    android:lines="1"
-                    android:ellipsize="none"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dots"
-                    android:lines="1"
-                    android:ellipsize="none"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="20dp">
-
-                <TextView
-                    android:id="@+id/answer_item_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sugar"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:layout_marginStart="40dp"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_item_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/fiber"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:layout_marginStart="40dp"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_item_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sodium"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:layout_marginStart="40dp"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_item_4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/potassium"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:layout_marginStart="40dp"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_item_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/saturated"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:layout_marginStart="40dp"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_item_6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/total"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:layout_marginStart="40dp"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_item_7"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cholesterol"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:layout_marginStart="40dp"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_item_8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/carbohydrates"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:layout_marginStart="40dp"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_item_9"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/protein"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:layout_marginStart="40dp"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="40dp"
-                android:layout_alignParentEnd="true"
-                android:gravity="end">
-
-                <TextView
-                    android:id="@+id/answer_sugar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_value"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_fiber"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_value"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_sodium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_value"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_potassium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_value"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_saturated"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_value"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_total"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_value"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_cholesterol"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_value"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_carbohydrated"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_value"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-                <TextView
-                    android:id="@+id/answer_protein"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_value"
-                    android:textSize="@dimen/info_size_answer_card"
-                    android:textColor="@color/ice_1"
-                    android:background="@color/primary_1"/>
-
-            </LinearLayout>
-
-        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="20dp"
-            android:layout_marginTop="10dp"
+            android:weightSum="2"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:paddingStart="60dp"
+            android:paddingEnd="60dp"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/answer_items"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/items"
+                android:textSize="@dimen/info_size_answer_card"
+                android:textColor="@color/ice_1"
+                android:background="@color/primary_1"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/answer_values"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@string/no_value"
+                android:textSize="@dimen/info_size_answer_card"
+                android:textColor="@color/ice_1"
+                android:background="@color/primary_1"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp"
+            android:gravity="center_vertical"
             android:weightSum="3">
 
             <TextView

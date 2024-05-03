@@ -19,15 +19,6 @@
     <string name="empty">Empty field :-(</string>
 
     <string name="serving">Serving size:&#160;&#160;*</string>
-    <string name="sugar">Sugar&#160;&#160;</string>
-    <string name="fiber">Fiber&#160;&#160;</string>
-    <string name="sodium">Sodium&#160;&#160;</string>
-    <string name="potassium">Potassium&#160;&#160;</string>
-    <string name="saturated">Saturated fat&#160;&#160;</string>
-    <string name="total">Total fat&#160;&#160;</string>
-    <string name="cholesterol">Cholesterol&#160;&#160;</string>
-    <string name="carbohydrates">Carbohydrates&#160;&#160;</string>
-    <string name="protein">Protein&#160;&#160;</string>
-    <string name="dots">.........................................................................................</string>
-    <string name="no_value">&#160;&#160;*</string>
+    <string name="items">Sugar\nFiber\nSodium\nPotassium\nSaturated fat\nTotal fat\nCholesterol\nCarbohydrates\nProtein</string>
+    <string name="no_value">*\n*\n*\n*\n*\n*\n*\n*\n*</string>
 </resources>

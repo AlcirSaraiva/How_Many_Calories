@@ -256,8 +256,7 @@ public class MainActivity extends AppCompatActivity {
     public class AnswerListAdapter extends ArrayAdapter {
         private Activity activityContext;
         private String[] answerRaw;
-        private TextView sugarTitle, fiberTitle, sodiumTitle, potassiumTitle, saturatedTitle, totalTitle, cholesterolTitle, carbohydratesTitle, proteinTitle, subscribeTitle;
-        private TextView nameValue, caloriesValue, servingValue, sugarValue, fiberValue, sodiumValue, potassiumValue, saturatedValue, totalValue, cholesterolValue, carbohydratesValue, proteinValue;
+        private TextView nameValue, caloriesValue, servingValue, items, values, subscribeTitle;
         private Button saveButton;
 
         public AnswerListAdapter(@NonNull Activity activityContext, String[] answerRaw) {
@@ -273,102 +272,50 @@ public class MainActivity extends AppCompatActivity {
             if (convertView == null) view = inflater.inflate(R.layout.answer_list, null, true);
 
             try {
-                sugarTitle = findViewById(R.id.answer_item_1);
-                fiberTitle = findViewById(R.id.answer_item_2);
-                sodiumTitle = findViewById(R.id.answer_item_3);
-                potassiumTitle = findViewById(R.id.answer_item_4);
-                saturatedTitle = findViewById(R.id.answer_item_5);
-                totalTitle = findViewById(R.id.answer_item_6);
-                cholesterolTitle = findViewById(R.id.answer_item_7);
-                carbohydratesTitle = findViewById(R.id.answer_item_8);
-                proteinTitle = findViewById(R.id.answer_item_9);
-                subscribeTitle = findViewById(R.id.answer_subscribe);
                 nameValue = findViewById(R.id.answer_name);
                 caloriesValue = findViewById(R.id.answer_calories);
                 servingValue = findViewById(R.id.answer_serving);
-                sugarValue = findViewById(R.id.answer_sugar);
-                fiberValue = findViewById(R.id.answer_fiber);
-                sodiumValue = findViewById(R.id.answer_sodium);
-                potassiumValue = findViewById(R.id.answer_potassium);
-                saturatedValue = findViewById(R.id.answer_saturated);
-                totalValue = findViewById(R.id.answer_total);
-                cholesterolValue = findViewById(R.id.answer_cholesterol);
-                carbohydratesValue = findViewById(R.id.answer_carbohydrated);
-                proteinValue = findViewById(R.id.answer_protein);
+                items = findViewById(R.id.answer_items);
+                values = findViewById(R.id.answer_values);
+                subscribeTitle = findViewById(R.id.answer_subscribe);
                 saveButton = findViewById(R.id.answer_save_button);
 
-                sugarTitle.setTypeface(typeRegular);
-                fiberTitle.setTypeface(typeRegular);
-                sodiumTitle.setTypeface(typeRegular);
-                potassiumTitle.setTypeface(typeRegular);
-                saturatedTitle.setTypeface(typeRegular);
-                totalTitle.setTypeface(typeRegular);
-                cholesterolTitle.setTypeface(typeRegular);
-                carbohydratesTitle.setTypeface(typeRegular);
-                proteinTitle.setTypeface(typeRegular);
-                subscribeTitle.setTypeface(typeRegular);
                 nameValue.setTypeface(typeRegular);
                 caloriesValue.setTypeface(typeRegular);
                 servingValue.setTypeface(typeRegular);
-                sugarValue.setTypeface(typeRegular);
-                fiberValue.setTypeface(typeRegular);
-                sodiumValue.setTypeface(typeRegular);
-                potassiumValue.setTypeface(typeRegular);
-                saturatedValue.setTypeface(typeRegular);
-                totalValue.setTypeface(typeRegular);
-                cholesterolValue.setTypeface(typeRegular);
-                carbohydratesValue.setTypeface(typeRegular);
-                proteinValue.setTypeface(typeRegular);
+                items.setTypeface(typeRegular);
+                values.setTypeface(typeRegular);
+                subscribeTitle.setTypeface(typeRegular);
                 saveButton.setTypeface(typeRegular);
 
                 if (!showAds) subscribeTitle.setText("");
 
                 String temp[] = answerRaw[position].split(",");
+                String upperString;
+                String vTemp;
 
                 if (temp.length == 12) {
-                    nameValue.setText(temp[0]);
+                    upperString = temp[0].substring(0, 1).toUpperCase() + temp[0].substring(1);
+                    nameValue.setText(upperString);
                     caloriesValue.setText(temp[1] + " Kcal");
-                    servingValue.setText(temp[2] + " g");
+                    servingValue.setText("Serving size: " + temp[2] + " g");
                     if (showAds) {
-                        sugarValue.setText(getString(R.string.no_value));
-                        fiberValue.setText(getString(R.string.no_value));
-                        sodiumValue.setText(getString(R.string.no_value));
-                        potassiumValue.setText(getString(R.string.no_value));
-                        saturatedValue.setText(getString(R.string.no_value));
-                        totalValue.setText(getString(R.string.no_value));
-                        cholesterolValue.setText(getString(R.string.no_value));
-                        carbohydratesValue.setText(getString(R.string.no_value));
-                        proteinValue.setText(getString(R.string.no_value));
-
-                        sugarValue.setTextColor(getColor(R.color.ice_1));
-                        fiberValue.setTextColor(getColor(R.color.ice_1));
-                        sodiumValue.setTextColor(getColor(R.color.ice_1));
-                        potassiumValue.setTextColor(getColor(R.color.ice_1));
-                        saturatedValue.setTextColor(getColor(R.color.ice_1));
-                        totalValue.setTextColor(getColor(R.color.ice_1));
-                        cholesterolValue.setTextColor(getColor(R.color.ice_1));
-                        carbohydratesValue.setTextColor(getColor(R.color.ice_1));
-                        proteinValue.setTextColor(getColor(R.color.ice_1));
+                        values.setText(getString(R.string.no_value));
+                        items.setTextColor(getColor(R.color.ice_1));
+                        values.setTextColor(getColor(R.color.ice_1));
                     } else {
-                        sugarValue.setText(temp[3] + " g");
-                        fiberValue.setText(temp[4] + " g");
-                        sodiumValue.setText(temp[5] + " mg");
-                        potassiumValue.setText(temp[6] + " mg");
-                        saturatedValue.setText(temp[7] + " g");
-                        totalValue.setText(temp[8] + " g");
-                        cholesterolValue.setText(temp[9] + " g");
-                        carbohydratesValue.setText(temp[10] + " g");
-                        proteinValue.setText(temp[11] + " g");
-
-                        sugarValue.setTextColor(getColor(R.color.black));
-                        fiberValue.setTextColor(getColor(R.color.black));
-                        sodiumValue.setTextColor(getColor(R.color.black));
-                        potassiumValue.setTextColor(getColor(R.color.black));
-                        saturatedValue.setTextColor(getColor(R.color.black));
-                        totalValue.setTextColor(getColor(R.color.black));
-                        cholesterolValue.setTextColor(getColor(R.color.black));
-                        carbohydratesValue.setTextColor(getColor(R.color.black));
-                        proteinValue.setTextColor(getColor(R.color.black));
+                        vTemp = temp[3] + " g\n" +
+                                temp[4] + " g\n" +
+                                temp[5] + " mg\n" +
+                                temp[6] + " mg\n" +
+                                temp[7] + " g\n" +
+                                temp[8] + " g\n" +
+                                temp[9] + " g\n" +
+                                temp[10] + " g\n" +
+                                temp[11] + " g";
+                        values.setText(vTemp);
+                        items.setTextColor(getColor(R.color.grey_text));
+                        values.setTextColor(getColor(R.color.grey_text));
                     }
                 }
 
