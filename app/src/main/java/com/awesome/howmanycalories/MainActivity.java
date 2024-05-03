@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
     private DisplayMetrics displayMetrics;
     private String TAG = "AppTag: ";
     private boolean adDebug = true;
-    private String[] nameArray, caloriesArray, servingArray, sugarArray, fiberArray, sodiumArray, potassiumArray, saturatedArray, totalArray, cholesterolArray, carbohydratesArray, proteinArray;
+    private String[] queryAnswerRaw;
 
     // ui
     private RelativeLayout rootView, contentView, splashScreen;
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     private AdRequest adRequest;
     private int adHeight = 0, contentViewMargin = 0, lastContentViewMargin = 0;
     private boolean adInitDone = false;
-    private boolean showAds = true;
+    private boolean showAds = false;
     private boolean legalTextAlreadyCalled = false;
     private ConsentInformation consentInformation;
 
@@ -255,26 +255,15 @@ public class MainActivity extends AppCompatActivity {
 
     public class AnswerListAdapter extends ArrayAdapter {
         private Activity activityContext;
-        private String[] name, calories, serving, sugar, fiber, sodium, potassium, saturated, total, cholesterol, carbohydrates, protein;
+        private String[] answerRaw;
         private TextView sugarTitle, fiberTitle, sodiumTitle, potassiumTitle, saturatedTitle, totalTitle, cholesterolTitle, carbohydratesTitle, proteinTitle, subscribeTitle;
         private TextView nameValue, caloriesValue, servingValue, sugarValue, fiberValue, sodiumValue, potassiumValue, saturatedValue, totalValue, cholesterolValue, carbohydratesValue, proteinValue;
         private Button saveButton;
 
-        public AnswerListAdapter(@NonNull Activity activityContext, String[] name, String[] calories, String[] serving, String[] sugar, String[] fiber, String[] sodium, String[] potassium, String[] saturated, String[] total, String[] cholesterol, String[] carbohydrates, String[] protein) {
-            super(activityContext, R.layout.answer_list, name);
+        public AnswerListAdapter(@NonNull Activity activityContext, String[] answerRaw) {
+            super(activityContext, R.layout.answer_list, answerRaw);
             this.activityContext = activityContext;
-            this.name = name;
-            this.calories = calories;
-            this.serving = serving;
-            this.sugar = sugar;
-            this.fiber = fiber;
-            this.sodium = sodium;
-            this.potassium = potassium;
-            this.saturated = saturated;
-            this.total = total;
-            this.cholesterol = cholesterol;
-            this.carbohydrates = carbohydrates;
-            this.protein = protein;
+            this.answerRaw = answerRaw;
         }
 
         @Override
@@ -333,18 +322,55 @@ public class MainActivity extends AppCompatActivity {
                 saveButton.setTypeface(typeRegular);
 
                 if (!showAds) subscribeTitle.setText("");
-                nameValue.setText(name[position]);
-                caloriesValue.setText(calories[position]);
-                servingValue.setText(serving[position]);
-                sugarValue.setText(sugar[position]);
-                fiberValue.setText(fiber[position]);
-                sodiumValue.setText(sodium[position]);
-                potassiumValue.setText(potassium[position]);
-                saturatedValue.setText(saturated[position]);
-                totalValue.setText(total[position]);
-                cholesterolValue.setText(cholesterol[position]);
-                carbohydratesValue.setText(carbohydrates[position]);
-                proteinValue.setText(protein[position]);
+
+                String temp[] = answerRaw[position].split(",");
+
+                if (temp.length == 12) {
+                    nameValue.setText(temp[0]);
+                    caloriesValue.setText(temp[1] + " Kcal");
+                    servingValue.setText(temp[2] + " g");
+                    if (showAds) {
+                        sugarValue.setText(getString(R.string.no_value));
+                        fiberValue.setText(getString(R.string.no_value));
+                        sodiumValue.setText(getString(R.string.no_value));
+                        potassiumValue.setText(getString(R.string.no_value));
+                        saturatedValue.setText(getString(R.string.no_value));
+                        totalValue.setText(getString(R.string.no_value));
+                        cholesterolValue.setText(getString(R.string.no_value));
+                        carbohydratesValue.setText(getString(R.string.no_value));
+                        proteinValue.setText(getString(R.string.no_value));
+
+                        sugarValue.setTextColor(getColor(R.color.ice_1));
+                        fiberValue.setTextColor(getColor(R.color.ice_1));
+                        sodiumValue.setTextColor(getColor(R.color.ice_1));
+                        potassiumValue.setTextColor(getColor(R.color.ice_1));
+                        saturatedValue.setTextColor(getColor(R.color.ice_1));
+                        totalValue.setTextColor(getColor(R.color.ice_1));
+                        cholesterolValue.setTextColor(getColor(R.color.ice_1));
+                        carbohydratesValue.setTextColor(getColor(R.color.ice_1));
+                        proteinValue.setTextColor(getColor(R.color.ice_1));
+                    } else {
+                        sugarValue.setText(temp[3] + " g");
+                        fiberValue.setText(temp[4] + " g");
+                        sodiumValue.setText(temp[5] + " mg");
+                        potassiumValue.setText(temp[6] + " mg");
+                        saturatedValue.setText(temp[7] + " g");
+                        totalValue.setText(temp[8] + " g");
+                        cholesterolValue.setText(temp[9] + " g");
+                        carbohydratesValue.setText(temp[10] + " g");
+                        proteinValue.setText(temp[11] + " g");
+
+                        sugarValue.setTextColor(getColor(R.color.black));
+                        fiberValue.setTextColor(getColor(R.color.black));
+                        sodiumValue.setTextColor(getColor(R.color.black));
+                        potassiumValue.setTextColor(getColor(R.color.black));
+                        saturatedValue.setTextColor(getColor(R.color.black));
+                        totalValue.setTextColor(getColor(R.color.black));
+                        cholesterolValue.setTextColor(getColor(R.color.black));
+                        carbohydratesValue.setTextColor(getColor(R.color.black));
+                        proteinValue.setTextColor(getColor(R.color.black));
+                    }
+                }
 
             } catch (Exception e) {
                 System.out.println(TAG + e.getMessage());
@@ -355,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void buildAnswer() {
-        AnswerListAdapter answerListAdapter = new AnswerListAdapter(applicationContext, nameArray, caloriesArray, servingArray, sugarArray, fiberArray, sodiumArray, potassiumArray, saturatedArray, totalArray, cholesterolArray, carbohydratesArray, proteinArray);
+        AnswerListAdapter answerListAdapter = new AnswerListAdapter(applicationContext, queryAnswerRaw);
         answerListView.setAdapter(answerListAdapter);
     }
 
@@ -523,37 +549,23 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray jArray = jObject.getJSONArray("items");
                     JSONObject item;
 
-                    nameArray = new String[jArray.length()];
-                    caloriesArray = new String[jArray.length()];
-                    servingArray = new String[jArray.length()];
-                    sugarArray = new String[jArray.length()];
-                    fiberArray = new String[jArray.length()];
-                    sodiumArray = new String[jArray.length()];
-                    potassiumArray = new String[jArray.length()];
-                    saturatedArray = new String[jArray.length()];
-                    totalArray = new String[jArray.length()];
-                    cholesterolArray = new String[jArray.length()];
-                    carbohydratesArray = new String[jArray.length()];
-                    proteinArray = new String[jArray.length()];
+                    queryAnswerRaw = new String[jArray.length()];
 
                     for (int i = 0; i < jArray.length(); i ++) {
                         item = jArray.getJSONObject(i);
-                        String itemName = item.getString("name");
-                        String calories = item.getString("calories");
-                        String serving = item.getString("serving_size_g");
 
-                        nameArray[i] = item.getString("name");
-                        caloriesArray[i] = item.getString("calories");
-                        servingArray[i] = item.getString("serving_size_g");
-                        sugarArray[i] = item.getString("sugar_g");
-                        fiberArray[i] = item.getString("fiber_g");
-                        sodiumArray[i] = item.getString("sodium_mg");
-                        potassiumArray[i] = item.getString("potassium_mg");
-                        saturatedArray[i] = item.getString("fat_saturated_g");
-                        totalArray[i] = item.getString("fat_total_g");
-                        cholesterolArray[i] = item.getString("cholesterol_mg");
-                        carbohydratesArray[i] = item.getString("carbohydrates_total_g");
-                        proteinArray[i] = item.getString("protein_g");
+                        queryAnswerRaw[i] = item.getString("name") + "," +
+                                            item.getString("calories") + "," +
+                                            item.getString("serving_size_g") + "," +
+                                            item.getString("sugar_g") + "," +
+                                            item.getString("fiber_g") + "," +
+                                            item.getString("sodium_mg") + "," +
+                                            item.getString("potassium_mg") + "," +
+                                            item.getString("fat_saturated_g") + "," +
+                                            item.getString("fat_total_g") + "," +
+                                            item.getString("cholesterol_mg") + "," +
+                                            item.getString("carbohydrates_total_g") + "," +
+                                            item.getString("protein_g");
                     }
 
                     buildAnswer();
