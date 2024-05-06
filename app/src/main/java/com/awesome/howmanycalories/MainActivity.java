@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     private DisplayMetrics displayMetrics;
     private String TAG = "AppTag: ";
     private boolean adDebug = true;
-    private String[] queryAnswerRaw;
+    private String[] queryAnswerRaw, savedContentTemp;
     private boolean timeToBuildAnswer = false;
     private String filesPath, saveFile = "data.txt";
 
@@ -271,9 +271,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buildAnswer() {
+        savedContentTemp = readFile().split("\n");
         AnswerListAdapter answerListAdapter = new AnswerListAdapter(context, R.layout.answer_list, queryAnswerRaw);
         answerListView.setAdapter(answerListAdapter);
-
     }
 
     private void buildSaved() {
@@ -357,12 +357,25 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                saveButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        save(answerRaw[position]);
+                boolean found = false;
+                for (int i = 0; i < savedContentTemp.length; i ++) {
+                    if (savedContentTemp[i].contains(answerRaw[position])) {
+                        saveButton.setText("Saved");
+                        saveButton.setTextColor(getColor(R.color.primary_1));
+                        found = true;
                     }
-                });
+                }
+
+                if (!found) {
+                    saveButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            save(answerRaw[position]);
+                            saveButton.setText("Saved");
+                            saveButton.setTextColor(getColor(R.color.primary_1));
+                        }
+                    });
+                }
             } catch (Exception e) {
                 System.out.println(TAG + "{AnswerListAdapter getView()} " + e.getMessage());
             }
@@ -376,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
         private String[] savedRaw;
         private int resource;
         private TextView caloriesValue;
-        private Button nameValue, saveButton;
+        private Button nameValue, deleteButton;
 
         public SavedListAdapter(@NonNull Context ctx, int resource, String[] savedRaw) {
             super(ctx, resource, savedRaw);
@@ -392,11 +405,11 @@ public class MainActivity extends AppCompatActivity {
             try {
                 nameValue = convertView.findViewById(R.id.saved_name);
                 caloriesValue = convertView.findViewById(R.id.saved_calories_per_serving);
-                saveButton = convertView.findViewById(R.id.saved_save_button);
+                deleteButton = convertView.findViewById(R.id.saved_delete_button);
 
                 nameValue.setTypeface(typeRegular);
                 caloriesValue.setTypeface(typeRegular);
-                saveButton.setTypeface(typeRegular);
+                deleteButton.setTypeface(typeRegular);
 
                 String[] temp = savedRaw[position].split(",");
                 String upperString;
@@ -438,7 +451,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-                saveButton.setOnClickListener(new View.OnClickListener() {
+                deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         deleteFromFile(savedRaw[position]);
@@ -627,9 +640,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 dataOnFile = dataOnFile + "\n" + dataToAdd;
             }
-            Toast.makeText(activityContext, "Saved", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(activityContext, "Already saved", Toast.LENGTH_SHORT).show();
         }
 
         writeFile(dataOnFile);
