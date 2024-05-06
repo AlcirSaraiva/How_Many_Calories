@@ -375,8 +375,8 @@ public class MainActivity extends AppCompatActivity {
         private Context ctx;
         private String[] savedRaw;
         private int resource;
-        private TextView nameValue, caloriesValue;
-        private Button saveButton;
+        private TextView caloriesValue;
+        private Button nameValue, saveButton;
 
         public SavedListAdapter(@NonNull Context ctx, int resource, String[] savedRaw) {
             super(ctx, resource, savedRaw);
@@ -408,6 +408,35 @@ public class MainActivity extends AppCompatActivity {
                     vTemp = temp[1] + " Kcal / " + temp[2] + " g";
                     caloriesValue.setText(vTemp);
                 }
+
+                nameValue.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int index = -1;
+                        if (queryAnswerRaw != null && queryAnswerRaw.length != 0) {
+                            for (int i = 0; i < queryAnswerRaw.length; i ++) {
+                                if (queryAnswerRaw[i].contains(savedRaw[position])) {
+                                    index = i;
+                                }
+                            }
+                            if (index == -1) {
+                                ArrayList<String> tempItems = new ArrayList<>(Arrays.asList(queryAnswerRaw));
+                                tempItems.add(savedRaw[position]);
+                                queryAnswerRaw = tempItems.toArray(new String[0]);
+                                index = queryAnswerRaw.length - 1;
+                            }
+                        } else {
+                            queryAnswerRaw = new String[1];
+                            queryAnswerRaw[0] = savedRaw[position];
+                        }
+
+                        buildAnswer();
+                        showResults();
+                        if (index != -1) {
+                            answerListView.setSelection(index);
+                        }
+                    }
+                });
 
                 saveButton.setOnClickListener(new View.OnClickListener() {
                     @Override

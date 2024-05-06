@@ -19,15 +19,18 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp">
 
-        <TextView
+        <Button
             android:id="@+id/saved_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:text="name"
+            android:background="@color/transparent"
+            android:textAllCaps="false"
             android:textSize="@dimen/name_size_answer_card"
             android:lines="1"
             android:ellipsize="end"
-            android:text="name"/>
+            android:textStyle="normal"
+            android:gravity="start|center_vertical"/>
 
         <LinearLayout
             android:layout_width="match_parent"
