@@ -248,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
         if (timeToBuildAnswer) {
             timeToBuildAnswer = false;
             buildAnswer();
+            showResults();
         }
     }
 
@@ -411,7 +412,8 @@ public class MainActivity extends AppCompatActivity {
                 saveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //save(answerRaw[position]);
+                        deleteFromFile(savedRaw[position]);
+                        buildSaved();
                     }
                 });
             } catch (Exception e) {
@@ -591,7 +593,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (index == -1) {
-            dataOnFile = dataOnFile + "\n" + dataToAdd;
+            if (dataOnFile.isEmpty()) {
+                dataOnFile = dataToAdd;
+            } else {
+                dataOnFile = dataOnFile + "\n" + dataToAdd;
+            }
             Toast.makeText(activityContext, "Saved", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(activityContext, "Already saved", Toast.LENGTH_SHORT).show();
@@ -628,6 +634,25 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             System.out.println(TAG + "{writeFile} " + e.getMessage());
         }
+    }
+
+    private void deleteFromFile(String dataToDelete) {
+        String dataOnFile = readFile();
+
+        String[] itemsOnFile = dataOnFile.split("\n");
+
+        String newData = "";
+        for (int i = 0; i < itemsOnFile.length; i ++) {
+            if (!itemsOnFile[i].contains(dataToDelete) && !itemsOnFile[i].isEmpty()) {
+                if (newData.isEmpty()) {
+                    newData = itemsOnFile[i];
+                } else {
+                    newData = newData + "\n" + itemsOnFile[i];
+                }
+            }
+        }
+
+        writeFile(newData);
     }
 
     // network
