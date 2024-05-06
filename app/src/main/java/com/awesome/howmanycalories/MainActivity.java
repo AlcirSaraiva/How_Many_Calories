@@ -49,6 +49,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -100,6 +101,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -109,6 +112,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -135,14 +139,16 @@ public class MainActivity extends AppCompatActivity {
     private boolean adDebug = true;
     private String[] queryAnswerRaw;
     private boolean timeToBuildAnswer = false;
+    private String filesPath, saveFile = "data.txt";
 
     // ui
     private RelativeLayout rootView, contentView, splashScreen;
-    private LinearLayout mainScreen;
+    private LinearLayout mainScreen, resultsButtonUnderline, savedButtonUnderline;
     private EditText question;
     private ImageButton questionButton;
-    private ListView answerListView;
+    private ListView answerListView, savedListView;
     private Typeface typeRegular;
+    private Button resultsButton, savedButton;
 
     // Ads
     private ImageView bottomBanner;
@@ -180,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
         applicationContext = this;
         activityContext = MainActivity.this;
         displayMetrics = context.getResources().getDisplayMetrics();
+        filesPath = context.getExternalFilesDir(null).getAbsolutePath();
         prepareNetwork();
 
         assignViews();
@@ -262,10 +269,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void buildAnswer() {
+    private void buildAnswer() {
         AnswerListAdapter answerListAdapter = new AnswerListAdapter(context, R.layout.answer_list, queryAnswerRaw);
         answerListView.setAdapter(answerListAdapter);
 
+    }
+
+    private void buildSaved() {
+        String[] temp = readFile().split("\n");
+        ArrayList<String> newTemp = new ArrayList<String>();
+
+        for (String s : temp) {
+            if (!s.isEmpty()) newTemp.add(s);
+        }
+        temp = newTemp.toArray(new String[newTemp.size()]);
+
+        SavedListAdapter savedListAdapter = new SavedListAdapter(context, R.layout.saved_list, temp);
+        savedListView.setAdapter(savedListAdapter);
     }
 
     public class AnswerListAdapter extends ArrayAdapter {
@@ -335,8 +355,67 @@ public class MainActivity extends AppCompatActivity {
                         values.setTextColor(getColor(R.color.grey_text));
                     }
                 }
+
+                saveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        save(answerRaw[position]);
+                    }
+                });
             } catch (Exception e) {
                 System.out.println(TAG + "{AnswerListAdapter getView()} " + e.getMessage());
+            }
+
+            return convertView;
+        }
+    }
+
+    public class SavedListAdapter extends ArrayAdapter {
+        private Context ctx;
+        private String[] savedRaw;
+        private int resource;
+        private TextView nameValue, caloriesValue;
+        private Button saveButton;
+
+        public SavedListAdapter(@NonNull Context ctx, int resource, String[] savedRaw) {
+            super(ctx, resource, savedRaw);
+            this.ctx = ctx;
+            this.savedRaw = savedRaw;
+            this.resource = resource;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) convertView = LayoutInflater.from(ctx).inflate(resource, parent, false);
+
+            try {
+                nameValue = convertView.findViewById(R.id.saved_name);
+                caloriesValue = convertView.findViewById(R.id.saved_calories_per_serving);
+                saveButton = convertView.findViewById(R.id.saved_save_button);
+
+                nameValue.setTypeface(typeRegular);
+                caloriesValue.setTypeface(typeRegular);
+                saveButton.setTypeface(typeRegular);
+
+                String[] temp = savedRaw[position].split(",");
+                String upperString;
+                String vTemp;
+
+                if (temp.length == 12) {
+                    upperString = temp[0].substring(0, 1).toUpperCase() + temp[0].substring(1);
+                    nameValue.setText(upperString);
+                    vTemp = temp[1] + " Kcal / " + temp[2] + " g";
+                    caloriesValue.setText(vTemp);
+                }
+
+                saveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //save(answerRaw[position]);
+                    }
+                });
+            } catch (Exception e) {
+                System.out.println(TAG + "{SavedListAdapter getView()} " + e.getMessage());
             }
 
             return convertView;
@@ -364,6 +443,12 @@ public class MainActivity extends AppCompatActivity {
 
         mainScreen = findViewById(R.id.main_screen);
         answerListView = findViewById(R.id.answer_list_view);
+        savedListView = findViewById(R.id.saved_list_view);
+
+        resultsButton = findViewById(R.id.results_button);
+        savedButton = findViewById(R.id.saved_button);
+        resultsButtonUnderline = findViewById(R.id.results_button_underline);
+        savedButtonUnderline = findViewById(R.id.saved_button_underline);
     }
 
     private void assignViewListeners() {
@@ -394,7 +479,6 @@ public class MainActivity extends AppCompatActivity {
                 startSubscribeFlow();
             }
         });
-
         questionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -405,6 +489,18 @@ public class MainActivity extends AppCompatActivity {
                         queryCalories();
                     }
                 });
+            }
+        });
+        resultsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showResults();
+            }
+        });
+        savedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSaved();
             }
         });
     }
@@ -443,7 +539,7 @@ public class MainActivity extends AppCompatActivity {
         view.startAnimation(fadeOut);
     }
 
-    void setContentViewMargin(int margin) {
+    private void setContentViewMargin(int margin) {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) contentView.getLayoutParams();
         params.setMargins(0, 0, 0, margin);
         contentView.setLayoutParams(params);
@@ -460,6 +556,78 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }, 1500);
+    }
+
+    private void showResults() {
+        answerListView.setVisibility(View.VISIBLE);
+        savedListView.setVisibility(View.GONE);
+        resultsButton.setTextColor(getColor(R.color.black));
+        savedButton.setTextColor(getColor(R.color.grey_button_text));
+        resultsButtonUnderline.setBackgroundColor(getColor(R.color.primary));
+        savedButtonUnderline.setBackgroundColor(getColor(R.color.transparent));
+    }
+
+    private void showSaved() {
+        answerListView.setVisibility(View.GONE);
+        savedListView.setVisibility(View.VISIBLE);
+        resultsButton.setTextColor(getColor(R.color.grey_button_text));
+        savedButton.setTextColor(getColor(R.color.black));
+        resultsButtonUnderline.setBackgroundColor(getColor(R.color.transparent));
+        savedButtonUnderline.setBackgroundColor(getColor(R.color.primary));
+        buildSaved();
+    }
+
+    // IO
+
+    private void save(String dataToAdd) {
+        String dataOnFile = readFile();
+
+        String[] itemsOnFile = dataOnFile.split("\n");
+
+        int index = -1;
+        for (int i = 0; i < itemsOnFile.length; i ++) {
+            if (itemsOnFile[i].contains(dataToAdd)) {
+                index = i;
+            }
+        }
+        if (index == -1) {
+            dataOnFile = dataOnFile + "\n" + dataToAdd;
+            Toast.makeText(activityContext, "Saved", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(activityContext, "Already saved", Toast.LENGTH_SHORT).show();
+        }
+
+        writeFile(dataOnFile);
+
+    }
+
+    private String readFile() {
+        String dataRead = "";
+        File file = new File(filesPath, saveFile);
+        int length = (int) file.length();
+        byte[] bytes = new byte[length];
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream(file);
+            fileInputStream.read(bytes);
+            fileInputStream.close();
+            dataRead = new String(bytes);
+        } catch (Exception e) {
+            System.out.println(TAG + "{readFile} " + e.getMessage());
+        }
+        return dataRead;
+    }
+
+    private void writeFile(String data) {
+        File file = new File(filesPath, saveFile);
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(data.getBytes());
+            fileOutputStream.close();
+        } catch (Exception e) {
+            System.out.println(TAG + "{writeFile} " + e.getMessage());
+        }
     }
 
     // network

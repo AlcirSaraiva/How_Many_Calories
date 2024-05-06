@@ -103,6 +103,7 @@
                     android:weightSum="2">
 
                     <Button
+                        android:id="@+id/results_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Results"
@@ -112,6 +113,7 @@
                         android:layout_weight="1"/>
 
                     <Button
+                        android:id="@+id/saved_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Saved"
@@ -138,16 +140,20 @@
                     android:weightSum="2">
 
                     <LinearLayout
+                        android:id="@+id/results_button_underline"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@color/primary" />
+                        android:background="@color/primary"
+                        android:orientation="horizontal"/>
 
                     <LinearLayout
+                        android:id="@+id/saved_button_underline"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@color/transparent" />
+                        android:background="@color/transparent"
+                        android:orientation="horizontal"/>
 
                 </LinearLayout>
 
@@ -160,6 +166,15 @@
                 android:background="@color/secondary"
                 android:divider="@color/transparent"
                 android:scrollbarStyle="outsideInset"/>
+
+            <ListView
+                android:id="@+id/saved_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/secondary"
+                android:divider="@color/transparent"
+                android:scrollbarStyle="outsideInset"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
