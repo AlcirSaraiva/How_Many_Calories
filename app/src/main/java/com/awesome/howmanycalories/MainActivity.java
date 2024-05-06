@@ -58,6 +58,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
@@ -109,6 +110,8 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -131,9 +134,11 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "AppTag: ";
     private boolean adDebug = true;
     private String[] queryAnswerRaw;
+    private boolean timeToBuildAnswer = false;
 
     // ui
     private RelativeLayout rootView, contentView, splashScreen;
+    private LinearLayout mainScreen;
     private EditText question;
     private ImageButton questionButton;
     private ListView answerListView;
@@ -233,6 +238,10 @@ public class MainActivity extends AppCompatActivity {
             mAdView = null;
             setContentViewMargin(0);
         }
+        if (timeToBuildAnswer) {
+            timeToBuildAnswer = false;
+            buildAnswer();
+        }
     }
 
     private void hideKeyboard() {
@@ -253,32 +262,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void buildAnswer() {
+        AnswerListAdapter answerListAdapter = new AnswerListAdapter(context, R.layout.answer_list, queryAnswerRaw);
+        answerListView.setAdapter(answerListAdapter);
+
+    }
+
     public class AnswerListAdapter extends ArrayAdapter {
-        private Activity activityContext;
+        private Context ctx;
         private String[] answerRaw;
+        private int resource;
         private TextView nameValue, caloriesValue, servingValue, items, values, subscribeTitle;
         private Button saveButton;
 
-        public AnswerListAdapter(@NonNull Activity activityContext, String[] answerRaw) {
-            super(activityContext, R.layout.answer_list, answerRaw);
-            this.activityContext = activityContext;
+        public AnswerListAdapter(@NonNull Context ctx, int resource, String[] answerRaw) {
+            super(ctx, resource, answerRaw);
+            this.ctx = ctx;
             this.answerRaw = answerRaw;
+            this.resource = resource;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view = convertView;
-            LayoutInflater inflater = activityContext.getLayoutInflater();
-            if (convertView == null) view = inflater.inflate(R.layout.answer_list, null, true);
+            if (convertView == null) convertView = LayoutInflater.from(ctx).inflate(resource, parent, false);
 
             try {
-                nameValue = findViewById(R.id.answer_name);
-                caloriesValue = findViewById(R.id.answer_calories);
-                servingValue = findViewById(R.id.answer_serving);
-                items = findViewById(R.id.answer_items);
-                values = findViewById(R.id.answer_values);
-                subscribeTitle = findViewById(R.id.answer_subscribe);
-                saveButton = findViewById(R.id.answer_save_button);
+                nameValue = convertView.findViewById(R.id.answer_name);
+                caloriesValue = convertView.findViewById(R.id.answer_calories);
+                servingValue = convertView.findViewById(R.id.answer_serving);
+                items = convertView.findViewById(R.id.answer_items);
+                values = convertView.findViewById(R.id.answer_values);
+                subscribeTitle = convertView.findViewById(R.id.answer_subscribe);
+                saveButton = convertView.findViewById(R.id.answer_save_button);
 
                 nameValue.setTypeface(typeRegular);
                 caloriesValue.setTypeface(typeRegular);
@@ -290,15 +305,17 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!showAds) subscribeTitle.setText("");
 
-                String temp[] = answerRaw[position].split(",");
+                String[] temp = answerRaw[position].split(",");
                 String upperString;
                 String vTemp;
 
                 if (temp.length == 12) {
                     upperString = temp[0].substring(0, 1).toUpperCase() + temp[0].substring(1);
                     nameValue.setText(upperString);
-                    caloriesValue.setText(temp[1] + " Kcal");
-                    servingValue.setText("Serving size: " + temp[2] + " g");
+                    vTemp = temp[1] + " Kcal";
+                    caloriesValue.setText(vTemp);
+                    vTemp = "Serving size: " + temp[2] + " g";
+                    servingValue.setText(vTemp);
                     if (showAds) {
                         values.setText(getString(R.string.no_value));
                         items.setTextColor(getColor(R.color.ice_1));
@@ -318,18 +335,12 @@ public class MainActivity extends AppCompatActivity {
                         values.setTextColor(getColor(R.color.grey_text));
                     }
                 }
-
             } catch (Exception e) {
-                System.out.println(TAG + e.getMessage());
+                System.out.println(TAG + "{AnswerListAdapter getView()} " + e.getMessage());
             }
 
-            return view;
+            return convertView;
         }
-    }
-
-    public void buildAnswer() {
-        AnswerListAdapter answerListAdapter = new AnswerListAdapter(applicationContext, queryAnswerRaw);
-        answerListView.setAdapter(answerListAdapter);
     }
 
     // ui
@@ -351,6 +362,7 @@ public class MainActivity extends AppCompatActivity {
         question = findViewById(R.id.question);
         questionButton = findViewById(R.id.question_button);
 
+        mainScreen = findViewById(R.id.main_screen);
         answerListView = findViewById(R.id.answer_list_view);
     }
 
@@ -386,7 +398,13 @@ public class MainActivity extends AppCompatActivity {
         questionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                queryCalories();
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        queryCalories();
+                    }
+                });
             }
         });
     }
@@ -514,17 +532,11 @@ public class MainActivity extends AppCompatActivity {
                                             item.getString("carbohydrates_total_g") + "," +
                                             item.getString("protein_g");
                     }
-
-                    buildAnswer();
-                } else {
-
+                    timeToBuildAnswer = true;
                 }
             } catch (Exception e) {
-                System.out.println(TAG + "{publishToTheServer} " + e.getMessage());
-
+                System.out.println(TAG + "{queryCalories} " + e.getMessage());
             }
-        } else {
-
         }
     }
 
