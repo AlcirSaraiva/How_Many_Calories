@@ -113,6 +113,7 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -289,6 +290,8 @@ public class MainActivity extends AppCompatActivity {
             if (!s.isEmpty()) newTemp.add(s);
         }
         temp = newTemp.toArray(new String[newTemp.size()]);
+
+        Collections.reverse(Arrays.asList(temp));
 
         SavedListAdapter savedListAdapter = new SavedListAdapter(context, R.layout.saved_list, temp);
         savedListView.setAdapter(savedListAdapter);
