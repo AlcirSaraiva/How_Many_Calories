@@ -347,8 +347,8 @@ public class MainActivity extends AppCompatActivity {
                     servingValue.setText(vTemp);
                     if (showAds) {
                         values.setText(getString(R.string.no_value));
-                        items.setTextColor(getColor(R.color.ice_1));
-                        values.setTextColor(getColor(R.color.ice_1));
+                        items.setTextColor(getColor(R.color.grey_50));
+                        values.setTextColor(getColor(R.color.grey_50));
                     } else {
                         vTemp = temp[3] + " g\n" +
                                 temp[4] + " g\n" +
@@ -400,8 +400,7 @@ public class MainActivity extends AppCompatActivity {
         private Context ctx;
         private String[] savedRaw;
         private int resource;
-        private TextView caloriesValue;
-        private Button nameValue, deleteButton;
+        private Button nameValue, caloriesValue, deleteButton;
 
         public SavedListAdapter(@NonNull Context ctx, int resource, String[] savedRaw) {
             super(ctx, resource, savedRaw);
@@ -463,12 +462,41 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+                caloriesValue.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int index = -1;
+                        if (queryAnswerRaw != null && queryAnswerRaw.length != 0) {
+                            for (int i = 0; i < queryAnswerRaw.length; i ++) {
+                                if (queryAnswerRaw[i].contains(savedRaw[position])) {
+                                    index = i;
+                                }
+                            }
+                            if (index == -1) {
+                                ArrayList<String> tempItems = new ArrayList<>(Arrays.asList(queryAnswerRaw));
+                                tempItems.add(savedRaw[position]);
+                                queryAnswerRaw = tempItems.toArray(new String[0]);
+                                index = queryAnswerRaw.length - 1;
+                            }
+                        } else {
+                            queryAnswerRaw = new String[1];
+                            queryAnswerRaw[0] = savedRaw[position];
+                        }
+
+                        buildAnswer();
+                        showResults();
+                        if (index != -1) {
+                            answerListView.setSelection(index);
+                        }
+                    }
+                });
+
                 deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         deleteFromFile(savedRaw[position]);
                         buildSaved();
-                        buildAnswer();
+                        if (queryAnswerRaw != null) buildAnswer();
                     }
                 });
             } catch (Exception e) {

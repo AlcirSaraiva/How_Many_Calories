@@ -7,7 +7,7 @@
     <string name="subscription_title">Subscription</string>
     <string name="subscription_text">You will be charged monthly until you cancel your subscription. </string>
     <string name="subscription_benefits_title">Benefits</string>
-    <string name="subscription_benefits">&#8226; No more Ads\n&#8226; Every new feature will be included</string>
+    <string name="subscription_benefits">&#8226; No more Ads\n&#8226; Full nutritional information\n&#8226; Every new feature will be included</string>
     <string name="subscription_button">Buy now</string>
 
     <string name="text_no_ads">No more ADS</string>
