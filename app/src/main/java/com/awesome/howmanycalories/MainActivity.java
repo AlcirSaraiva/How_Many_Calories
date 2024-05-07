@@ -138,17 +138,19 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "AppTag: ";
     private boolean adDebug = true;
     private String[] queryAnswerRaw, savedContentTemp;
-    private boolean timeToBuildAnswer = false;
+    private boolean timeToBuildAnswer = false, showInfo = false;
     private String filesPath, saveFile = "data.txt";
+    private String infoMessage = "";
 
     // ui
     private RelativeLayout rootView, contentView, splashScreen;
-    private LinearLayout mainScreen, resultsButtonUnderline, savedButtonUnderline, settingsScreen;
+    private LinearLayout mainScreen, resultsButtonUnderline, savedButtonUnderline, settingsScreen, infoScreen;
     private EditText question;
     private ImageButton questionButton, buttonSettings, buttonSettingsClose;
     private ListView answerListView, savedListView;
     private Typeface typeRegular;
     private Button resultsButton, savedButton;
+    private TextView infoTextView;
 
     // Ads
     private ImageView bottomBanner;
@@ -247,6 +249,11 @@ public class MainActivity extends AppCompatActivity {
             timeToBuildAnswer = false;
             buildAnswer();
             showResults();
+        }
+        if (showInfo) {
+            showInfo = false;
+            infoScreen.setVisibility(View.VISIBLE);
+            infoTextView.setText(infoMessage);
         }
     }
 
@@ -497,6 +504,9 @@ public class MainActivity extends AppCompatActivity {
         resultsButtonUnderline = findViewById(R.id.results_button_underline);
         savedButtonUnderline = findViewById(R.id.saved_button_underline);
         buttonSettings = findViewById(R.id.settings_button);
+
+        infoScreen = findViewById(R.id.info);
+        infoTextView = findViewById(R.id.info_text_view);
     }
 
     private void assignViewListeners() {
@@ -565,6 +575,7 @@ public class MainActivity extends AppCompatActivity {
         questionTitle.setTypeface(typeRegular);
         resultsButton.setTypeface(typeRegular);
         savedButton.setTypeface(typeRegular);
+        infoTextView.setTypeface(typeRegular);
     }
 
     private void fadeOutAndHideImage(final View view) {
@@ -607,6 +618,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showResults() {
+        infoScreen.setVisibility(View.GONE);
         answerListView.setVisibility(View.VISIBLE);
         savedListView.setVisibility(View.GONE);
         resultsButton.setTextColor(getColor(R.color.black));
@@ -616,6 +628,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showSaved() {
+        infoScreen.setVisibility(View.GONE);
         answerListView.setVisibility(View.GONE);
         savedListView.setVisibility(View.VISIBLE);
         resultsButton.setTextColor(getColor(R.color.grey_button_text));
@@ -741,6 +754,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void queryCalories() {
+        infoMessage = getString(R.string.working);
+        showInfo = true;
         String questionText = question.getText().toString();
         hideKeyboard();
         if (!questionText.isEmpty()) {
@@ -762,6 +777,11 @@ public class MainActivity extends AppCompatActivity {
 
                     queryAnswerRaw = new String[jArray.length()];
 
+                    if (queryAnswerRaw.length == 0) {
+                        infoMessage = getString(R.string.not_found);
+                        showInfo = true;
+                    }
+
                     for (int i = 0; i < jArray.length(); i ++) {
                         item = jArray.getJSONObject(i);
 
@@ -779,8 +799,13 @@ public class MainActivity extends AppCompatActivity {
                                             item.getString("protein_g");
                     }
                     timeToBuildAnswer = true;
+                } else {
+                    infoMessage = getString(R.string.something_wrong);
+                    showInfo = true;
                 }
             } catch (Exception e) {
+                infoMessage = getString(R.string.something_wrong);
+                showInfo = true;
                 System.out.println(TAG + "{queryCalories} " + e.getMessage());
             }
         }

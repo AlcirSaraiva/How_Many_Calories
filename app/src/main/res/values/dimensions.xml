@@ -43,5 +43,6 @@
     <dimen name="calories_size_saved_card">18sp</dimen>
     <dimen name="info_size_answer_card">20sp</dimen>
     <dimen name="subscribe_size_answer_card">18sp</dimen>
+    <dimen name="info_size">16sp</dimen>
 
 </resources>

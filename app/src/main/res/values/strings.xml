@@ -24,4 +24,8 @@
     <string name="results">Results</string>
     <string name="saved">Saved</string>
     <string name="save">Save</string>
+
+    <string name="working">Working…</string>
+    <string name="not_found">Not found :(</string>
+    <string name="something_wrong">Something went wrong :(</string>
 </resources>
