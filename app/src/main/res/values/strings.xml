@@ -13,7 +13,7 @@
     <string name="text_no_ads">No more ADS</string>
     <string name="text_manage_subscription">Subscription</string>
 
-    <string name="question">Try entering a food, dish or even list of ingredients</string>
+    <string name="question">Try entering a food,\ndish or even list of ingredients</string>
     <string name="question_button">How many calories?</string>
     <string name="answer">answer will show here</string>
     <string name="empty">Empty field :-(</string>
@@ -21,4 +21,6 @@
     <string name="serving">Serving size:&#160;&#160;*</string>
     <string name="items">Sugar\nFiber\nSodium\nPotassium\nSaturated fat\nTotal fat\nCholesterol\nCarbohydrates\nProtein</string>
     <string name="no_value">*\n*\n*\n*\n*\n*\n*\n*\n*</string>
+    <string name="results">Results</string>
+    <string name="saved">Saved</string>
 </resources>

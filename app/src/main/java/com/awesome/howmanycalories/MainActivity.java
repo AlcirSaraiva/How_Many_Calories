@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     private AdRequest adRequest;
     private int adHeight = 0, contentViewMargin = 0, lastContentViewMargin = 0;
     private boolean adInitDone = false;
-    private boolean showAds = false;
+    private boolean showAds = true;
     private boolean legalTextAlreadyCalled = false;
     private ConsentInformation consentInformation;
 
@@ -551,6 +551,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void assignFonts() {
         typeRegular = Typeface.createFromAsset(getAssets(), "regular.ttf");
+        TextView questionTitle = findViewById(R.id.question_title);
+        questionTitle.setTypeface(typeRegular);
+        resultsButton.setTypeface(typeRegular);
+        savedButton.setTypeface(typeRegular);
     }
 
     private void refreshAppUI(boolean showUI) {

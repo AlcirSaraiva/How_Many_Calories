@@ -40,12 +40,13 @@
                     android:layout_marginBottom="@dimen/margin_little">
 
                     <TextView
+                        android:id="@+id/question_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/question"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_1"
-                        android:layout_marginTop="30dp"
+                        android:layout_marginTop="20dp"
                         android:layout_marginStart="30dp"/>
 
                     <LinearLayout
@@ -85,7 +86,7 @@
 
                 <ImageButton
                     android:id="@+id/question_button"
-                    android:layout_width="160dp"
+                    android:layout_width="170dp"
                     android:layout_height="52dp"
                     android:text="@string/question_button"
                     android:textAllCaps="false"
@@ -106,7 +107,8 @@
                         android:id="@+id/results_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Results"
+                        android:text="@string/results"
+                        android:textSize="@dimen/text_size_tab_buttons"
                         android:textColor="@color/black"
                         android:background="@color/transparent"
                         android:textAllCaps="false"
@@ -116,7 +118,8 @@
                         android:id="@+id/saved_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Saved"
+                        android:text="@string/saved"
+                        android:textSize="@dimen/text_size_tab_buttons"
                         android:textColor="@color/grey_button_text"
                         android:background="@color/transparent"
                         android:textAllCaps="false"
@@ -324,7 +327,7 @@
         android:id="@+id/splash_screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:layout_width="match_parent"
