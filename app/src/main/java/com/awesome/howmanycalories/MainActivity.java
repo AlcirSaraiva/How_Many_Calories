@@ -143,9 +143,9 @@ public class MainActivity extends AppCompatActivity {
 
     // ui
     private RelativeLayout rootView, contentView, splashScreen;
-    private LinearLayout mainScreen, resultsButtonUnderline, savedButtonUnderline;
+    private LinearLayout mainScreen, resultsButtonUnderline, savedButtonUnderline, settingsScreen;
     private EditText question;
-    private ImageButton questionButton;
+    private ImageButton questionButton, buttonSettings, buttonSettingsClose;
     private ListView answerListView, savedListView;
     private Typeface typeRegular;
     private Button resultsButton, savedButton;
@@ -172,9 +172,8 @@ public class MainActivity extends AppCompatActivity {
     private String subscriptionId = "basic_subscription";
     private boolean fullVersionUpdateUI = false;
     private boolean isFullVersion = false;
-    private LinearLayout onlineCard, subscriptionCard;
+    private LinearLayout onlineCard;
     private Button buttonBuySubscription;
-    private ImageButton buttonSubscriptionClose;
     private TextView subscriptionCardTitle;
 
     @Override
@@ -203,9 +202,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!isOnline) {
                     onlineCard.setVisibility(View.VISIBLE);
-                    refreshAppUI(false);
                 } else {
-                    refreshAppUI(true);
+                    initSubscriptions();
                 }
 
                 threadCycleRunnable = new Runnable() {
@@ -223,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
     private void threadCycle() {
         if (onlineCard.getVisibility() == View.VISIBLE && isOnline) {
             onlineCard.setVisibility(View.GONE);
-            refreshAppUI(true);
+            initSubscriptions();
         }
         // show ads
         if (contentViewMargin == 0 && mAdView != null && showAds) {
@@ -481,11 +479,11 @@ public class MainActivity extends AppCompatActivity {
 
         onlineCard = findViewById(R.id.online_card);
 
-        subscriptionCard = findViewById(R.id.subscription_card);
+        settingsScreen = findViewById(R.id.settings);
         subscriptionCardTitle = findViewById(R.id.subscription_card_title);
 
         buttonBuySubscription = findViewById(R.id.button_buy_subscription);
-        buttonSubscriptionClose = findViewById(R.id.button_subscription_close);
+        buttonSettingsClose = findViewById(R.id.button_settings_close);
 
         question = findViewById(R.id.question);
         questionButton = findViewById(R.id.question_button);
@@ -498,6 +496,7 @@ public class MainActivity extends AppCompatActivity {
         savedButton = findViewById(R.id.saved_button);
         resultsButtonUnderline = findViewById(R.id.results_button_underline);
         savedButtonUnderline = findViewById(R.id.saved_button_underline);
+        buttonSettings = findViewById(R.id.settings_button);
     }
 
     private void assignViewListeners() {
@@ -507,11 +506,10 @@ public class MainActivity extends AppCompatActivity {
                     intent.setPackage("com.android.vending");
                     startActivity(intent);
          */
-        buttonSubscriptionClose.setOnClickListener(new View.OnClickListener() {
+        buttonSettingsClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                subscriptionCard.setVisibility(View.GONE);
-                refreshAppUI(true);
+                closeSettings();
             }
         });
         buttonBuySubscription.setOnClickListener(new View.OnClickListener() {
@@ -521,10 +519,11 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        fadeOutAndHideImage(subscriptionCard);
+                        mainScreen.setVisibility(View.VISIBLE);
+                        fadeOutAndHideImage(settingsScreen);
                     }
                 }, 1000);
-                refreshAppUI(true);
+                initSubscriptions();
                 startSubscribeFlow();
             }
         });
@@ -552,6 +551,12 @@ public class MainActivity extends AppCompatActivity {
                 showSaved();
             }
         });
+        buttonSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSettings();
+            }
+        });
     }
 
     private void assignFonts() {
@@ -560,16 +565,6 @@ public class MainActivity extends AppCompatActivity {
         questionTitle.setTypeface(typeRegular);
         resultsButton.setTypeface(typeRegular);
         savedButton.setTypeface(typeRegular);
-    }
-
-    private void refreshAppUI(boolean showUI) {
-        if (showUI) {
-            if (onlineCard != null) {
-                if (onlineCard.getVisibility() != View.VISIBLE) {
-                    initSubscriptions();
-                }
-            }
-        }
     }
 
     private void fadeOutAndHideImage(final View view) {
@@ -628,6 +623,16 @@ public class MainActivity extends AppCompatActivity {
         resultsButtonUnderline.setBackgroundColor(getColor(R.color.transparent));
         savedButtonUnderline.setBackgroundColor(getColor(R.color.primary));
         buildSaved();
+    }
+
+    private void openSettings() {
+        settingsScreen.setVisibility(View.VISIBLE);
+        mainScreen.setVisibility(View.GONE);
+    }
+
+    private void closeSettings() {
+        settingsScreen.setVisibility(View.GONE);
+        mainScreen.setVisibility(View.VISIBLE);
     }
 
     // IO

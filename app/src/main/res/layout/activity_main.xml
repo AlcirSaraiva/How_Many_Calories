@@ -56,8 +56,9 @@
                         android:gravity="end">
 
                         <ImageButton
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
+                            android:id="@+id/settings_button"
+                            android:layout_width="@dimen/button_size_little"
+                            android:layout_height="@dimen/button_size_little"
                             android:scaleType="fitCenter"
                             android:src="@drawable/burger"
                             android:background="@color/transparent"
@@ -231,43 +232,44 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/subscription_card"
+            android:id="@+id/settings"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/card_bg"
+            android:background="@color/primary_2"
             android:orientation="vertical"
             android:visibility="gone">
 
             <ImageButton
-                android:id="@+id/button_subscription_close"
+                android:id="@+id/button_settings_close"
                 android:layout_width="@dimen/button_size_little"
                 android:layout_height="@dimen/button_size_little"
                 android:src="@drawable/close"
-                android:paddingTop="@dimen/button_margin_little"
-                android:paddingEnd="@dimen/button_margin_little"
+                android:layout_marginTop="@dimen/button_margin_little"
+                android:layout_marginEnd="@dimen/button_margin_little"
                 android:scaleType="fitCenter"
                 android:background="@color/transparent"
                 android:layout_gravity="end"/>
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/card_image_height"
+                android:layout_marginBottom="@dimen/card_image_margin"
+                android:scaleType="fitCenter"
+                android:src="@drawable/logo" />
+
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/card_margin"
                 android:layout_marginEnd="@dimen/card_margin"
                 android:paddingTop="@dimen/card_padding_vertical"
+                android:layout_marginBottom="@dimen/card_padding_vertical"
                 android:paddingBottom="@dimen/card_padding_vertical"
                 android:paddingStart="@dimen/card_padding_horizontal"
                 android:paddingEnd="@dimen/card_padding_horizontal"
                 android:background="@drawable/card_white"
-                android:orientation="vertical"
-                android:elevation="@dimen/elevation" >
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/card_image_height"
-                    android:layout_marginBottom="@dimen/card_image_margin"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/no_ads_card" />
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/subscription_card_title"
