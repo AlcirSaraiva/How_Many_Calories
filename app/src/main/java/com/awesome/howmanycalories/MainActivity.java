@@ -360,19 +360,23 @@ public class MainActivity extends AppCompatActivity {
                 boolean found = false;
                 for (int i = 0; i < savedContentTemp.length; i ++) {
                     if (savedContentTemp[i].contains(answerRaw[position])) {
-                        saveButton.setText("Saved");
+                        saveButton.setText(getString(R.string.saved));
                         saveButton.setTextColor(getColor(R.color.primary_1));
                         found = true;
                     }
                 }
 
                 if (!found) {
+                    saveButton.setText(getString(R.string.save));
+                    saveButton.setTextColor(getColor(R.color.white));
                     saveButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             save(answerRaw[position]);
-                            saveButton.setText("Saved");
+                            buildAnswer();
+                            saveButton.setText(getString(R.string.saved));
                             saveButton.setTextColor(getColor(R.color.primary_1));
+                            answerListView.setSelection(position);
                         }
                     });
                 }
@@ -456,6 +460,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         deleteFromFile(savedRaw[position]);
                         buildSaved();
+                        buildAnswer();
                     }
                 });
             } catch (Exception e) {

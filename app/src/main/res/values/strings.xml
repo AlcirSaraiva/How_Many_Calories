@@ -23,4 +23,5 @@
     <string name="no_value">*\n*\n*\n*\n*\n*\n*\n*\n*</string>
     <string name="results">Results</string>
     <string name="saved">Saved</string>
+    <string name="save">Save</string>
 </resources>
