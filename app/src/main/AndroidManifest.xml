@@ -17,10 +17,11 @@
         android:theme="@style/Theme.HowManyCalories"
         tools:targetApi="31">
 
-        <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
+        <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713
+        real one: ca-app-pub-8261651469212664~8113143677 -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-8261651469212664~8113143677" />
 
         <activity
             android:name=".MainActivity"

@@ -10,8 +10,8 @@ android {
         applicationId = "com.awesome.howmanycalories"
         minSdk = 24
         targetSdk = 34
-        versionCode = 101
-        versionName = "1.01"
+        versionCode = 102
+        versionName = "1.02"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean timeToBuildAnswer = false, showInfo = false;
     private String filesPath, saveFile = "data.txt";
     private String infoMessage = "";
-    private boolean firstRelease = true;
+    private boolean firstRelease = false;
 
     // ui
     private RelativeLayout rootView, contentView, splashScreen;
@@ -247,12 +247,14 @@ public class MainActivity extends AppCompatActivity {
         if (fullVersionUpdateUI) {
             fullVersionUpdateUI = false;
             setContentViewMargin(0);
+            buttonSettings.setImageResource(R.drawable.subscriptions);
         }
         // when full version after purchase
         if (!showAds && mAdView != null) {
             rootView.removeView(mAdView);
             mAdView = null;
             setContentViewMargin(0);
+            buttonSettings.setImageResource(R.drawable.subscriptions);
         }
         if (timeToBuildAnswer) {
             timeToBuildAnswer = false;
@@ -562,12 +564,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void assignViewListeners() {
-        /* show subscriptions
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("https://play.google.com/store/account/subscriptions"));
-                    intent.setPackage("com.android.vending");
-                    startActivity(intent);
-         */
         buttonSettingsClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -610,7 +606,14 @@ public class MainActivity extends AppCompatActivity {
         buttonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openSettings();
+                if (showAds) {
+                    openSettings();
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("https://play.google.com/store/account/subscriptions"));
+                    intent.setPackage("com.android.vending");
+                    startActivity(intent);
+                }
             }
         });
         question.setOnKeyListener(new View.OnKeyListener() {
@@ -986,7 +989,8 @@ public class MainActivity extends AppCompatActivity {
         mAdView.setAdSize(adSize);
 
         // test id ca-app-pub-3940256099942544/9214589741
-        mAdView.setAdUnitId("ca-app-pub-3940256099942544/9214589741");
+        //  real one: ca-app-pub-8261651469212664/8524207219
+        mAdView.setAdUnitId("ca-app-pub-8261651469212664/8524207219");
 
         mAdView.setAdListener(new AdListener() {
             @Override
