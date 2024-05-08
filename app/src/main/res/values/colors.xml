@@ -12,11 +12,11 @@
 
     <color name="primary">#5d7a8a</color>
     <color name="primary_accent">#ecc25e</color>
-    <color name="secondary">#ffd3b6</color>
+    <color name="secondary">#f0d6c5</color>
     <color name="alert">#db6160</color>
     <color name="ice">#cdc6cd</color>
 
-    <color name="primary_1">#aabcc6</color>
+    <color name="primary_1">#c2cfd6</color>
     <color name="primary_accent_1">#f5e0ad</color>
     <color name="secondary_1">#ffe9db</color>
     <color name="alert_1">#edb0b0</color>

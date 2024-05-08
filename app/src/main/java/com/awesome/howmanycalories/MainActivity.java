@@ -31,6 +31,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.method.KeyListener;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -138,10 +141,11 @@ public class MainActivity extends AppCompatActivity {
     private DisplayMetrics displayMetrics;
     private String TAG = "AppTag: ";
     private boolean adDebug = true;
-    private String[] queryAnswerRaw, savedContentTemp;
+    private String[] answers, saved, savedTemp;
     private boolean timeToBuildAnswer = false, showInfo = false;
     private String filesPath, saveFile = "data.txt";
     private String infoMessage = "";
+    private boolean firstRelease = true;
 
     // ui
     private RelativeLayout rootView, contentView, splashScreen;
@@ -194,6 +198,10 @@ public class MainActivity extends AppCompatActivity {
         assignViews();
         assignViewListeners();
         assignFonts();
+
+        infoTextView.setText(getText(R.string.results_empty));
+
+        checkFirstRelease();
 
         showBottomBanner();
 
@@ -250,11 +258,13 @@ public class MainActivity extends AppCompatActivity {
             timeToBuildAnswer = false;
             buildAnswer();
             showResults();
+            question.clearFocus();
         }
         if (showInfo) {
             showInfo = false;
             infoScreen.setVisibility(View.VISIBLE);
             infoTextView.setText(infoMessage);
+            question.clearFocus();
         }
     }
 
@@ -277,23 +287,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buildAnswer() {
-        savedContentTemp = readFile().split("\n");
-        AnswerListAdapter answerListAdapter = new AnswerListAdapter(context, R.layout.answer_list, queryAnswerRaw);
+        savedTemp = readFile().split("\n");
+        AnswerListAdapter answerListAdapter = new AnswerListAdapter(context, R.layout.answer_list, answers);
         answerListView.setAdapter(answerListAdapter);
     }
 
     private void buildSaved() {
-        String[] temp = readFile().split("\n");
-        ArrayList<String> newTemp = new ArrayList<String>();
+        saved = readFile().split("\n");
+        ArrayList<String> temp = new ArrayList<String>();
 
-        for (String s : temp) {
-            if (!s.isEmpty()) newTemp.add(s);
+        for (String s : saved) {
+            if (!s.isEmpty()) temp.add(s);
         }
-        temp = newTemp.toArray(new String[newTemp.size()]);
+        saved = temp.toArray(new String[temp.size()]);
 
-        Collections.reverse(Arrays.asList(temp));
+        Collections.reverse(Arrays.asList(saved));
 
-        SavedListAdapter savedListAdapter = new SavedListAdapter(context, R.layout.saved_list, temp);
+        SavedListAdapter savedListAdapter = new SavedListAdapter(context, R.layout.saved_list, saved);
         savedListView.setAdapter(savedListAdapter);
     }
 
@@ -366,8 +376,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 boolean found = false;
-                for (int i = 0; i < savedContentTemp.length; i ++) {
-                    if (savedContentTemp[i].contains(answerRaw[position])) {
+                for (int i = 0; i < savedTemp.length; i ++) {
+                    if (savedTemp[i].contains(answerRaw[position])) {
                         saveButton.setText(getString(R.string.saved));
                         saveButton.setTextColor(getColor(R.color.primary_1));
                         found = true;
@@ -437,21 +447,26 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         int index = -1;
-                        if (queryAnswerRaw != null && queryAnswerRaw.length != 0) {
-                            for (int i = 0; i < queryAnswerRaw.length; i ++) {
-                                if (queryAnswerRaw[i].contains(savedRaw[position])) {
-                                    index = i;
+                        if (answers != null) {
+                            if (answers.length != 0) {
+                                for (int i = 0; i < answers.length; i ++) {
+                                    if (answers[i].contains(savedRaw[position])) {
+                                        index = i;
+                                    }
                                 }
-                            }
-                            if (index == -1) {
-                                ArrayList<String> tempItems = new ArrayList<>(Arrays.asList(queryAnswerRaw));
-                                tempItems.add(savedRaw[position]);
-                                queryAnswerRaw = tempItems.toArray(new String[0]);
-                                index = queryAnswerRaw.length - 1;
+                                if (index == -1) {
+                                    ArrayList<String> tempItems = new ArrayList<>(Arrays.asList(answers));
+                                    tempItems.add(savedRaw[position]);
+                                    answers = tempItems.toArray(new String[0]);
+                                    index = answers.length - 1;
+                                }
+                            } else {
+                                answers = new String[1];
+                                answers[0] = savedRaw[position];
                             }
                         } else {
-                            queryAnswerRaw = new String[1];
-                            queryAnswerRaw[0] = savedRaw[position];
+                            answers = new String[1];
+                            answers[0] = savedRaw[position];
                         }
 
                         buildAnswer();
@@ -466,21 +481,26 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         int index = -1;
-                        if (queryAnswerRaw != null && queryAnswerRaw.length != 0) {
-                            for (int i = 0; i < queryAnswerRaw.length; i ++) {
-                                if (queryAnswerRaw[i].contains(savedRaw[position])) {
-                                    index = i;
+                        if (answers != null) {
+                            if (answers.length != 0) {
+                                for (int i = 0; i < answers.length; i ++) {
+                                    if (answers[i].contains(savedRaw[position])) {
+                                        index = i;
+                                    }
                                 }
-                            }
-                            if (index == -1) {
-                                ArrayList<String> tempItems = new ArrayList<>(Arrays.asList(queryAnswerRaw));
-                                tempItems.add(savedRaw[position]);
-                                queryAnswerRaw = tempItems.toArray(new String[0]);
-                                index = queryAnswerRaw.length - 1;
+                                if (index == -1) {
+                                    ArrayList<String> tempItems = new ArrayList<>(Arrays.asList(answers));
+                                    tempItems.add(savedRaw[position]);
+                                    answers = tempItems.toArray(new String[0]);
+                                    index = answers.length - 1;
+                                }
+                            } else {
+                                answers = new String[1];
+                                answers[0] = savedRaw[position];
                             }
                         } else {
-                            queryAnswerRaw = new String[1];
-                            queryAnswerRaw[0] = savedRaw[position];
+                            answers = new String[1];
+                            answers[0] = savedRaw[position];
                         }
 
                         buildAnswer();
@@ -495,8 +515,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         deleteFromFile(savedRaw[position]);
-                        buildSaved();
-                        if (queryAnswerRaw != null) buildAnswer();
+                        showSaved();
+                        if (answers != null) buildAnswer();
+
                     }
                 });
             } catch (Exception e) {
@@ -571,13 +592,7 @@ public class MainActivity extends AppCompatActivity {
         questionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        queryCalories();
-                    }
-                });
+                queryCalories();
             }
         });
         resultsButton.setOnClickListener(new View.OnClickListener() {
@@ -598,6 +613,15 @@ public class MainActivity extends AppCompatActivity {
                 openSettings();
             }
         });
+        question.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    queryCalories();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void assignFonts() {
@@ -607,6 +631,7 @@ public class MainActivity extends AppCompatActivity {
         resultsButton.setTypeface(typeRegular);
         savedButton.setTypeface(typeRegular);
         infoTextView.setTypeface(typeRegular);
+        question.setTypeface(typeRegular);
     }
 
     private void fadeOutAndHideImage(final View view) {
@@ -649,24 +674,68 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showResults() {
-        infoScreen.setVisibility(View.GONE);
-        answerListView.setVisibility(View.VISIBLE);
-        savedListView.setVisibility(View.GONE);
-        resultsButton.setTextColor(getColor(R.color.black));
-        savedButton.setTextColor(getColor(R.color.grey_button_text));
-        resultsButtonUnderline.setBackgroundColor(getColor(R.color.primary));
-        savedButtonUnderline.setBackgroundColor(getColor(R.color.transparent));
+        if (answers != null) {
+            if (answers.length != 0) {
+                infoScreen.setVisibility(View.GONE);
+                answerListView.setVisibility(View.VISIBLE);
+                savedListView.setVisibility(View.GONE);
+                resultsButton.setTextColor(getColor(R.color.black));
+                savedButton.setTextColor(getColor(R.color.grey_button_text));
+                resultsButtonUnderline.setBackgroundColor(getColor(R.color.primary));
+                savedButtonUnderline.setBackgroundColor(getColor(R.color.transparent));
+            } else {
+                infoScreen.setVisibility(View.VISIBLE);
+                answerListView.setVisibility(View.GONE);
+                savedListView.setVisibility(View.GONE);
+                resultsButton.setTextColor(getColor(R.color.black));
+                savedButton.setTextColor(getColor(R.color.grey_button_text));
+                resultsButtonUnderline.setBackgroundColor(getColor(R.color.primary));
+                savedButtonUnderline.setBackgroundColor(getColor(R.color.transparent));
+                infoTextView.setText(getText(R.string.results_empty));
+            }
+        } else {
+            infoScreen.setVisibility(View.VISIBLE);
+            answerListView.setVisibility(View.GONE);
+            savedListView.setVisibility(View.GONE);
+            resultsButton.setTextColor(getColor(R.color.black));
+            savedButton.setTextColor(getColor(R.color.grey_button_text));
+            resultsButtonUnderline.setBackgroundColor(getColor(R.color.primary));
+            savedButtonUnderline.setBackgroundColor(getColor(R.color.transparent));
+            infoTextView.setText(getText(R.string.results_empty));
+        }
     }
 
     private void showSaved() {
-        infoScreen.setVisibility(View.GONE);
-        answerListView.setVisibility(View.GONE);
-        savedListView.setVisibility(View.VISIBLE);
-        resultsButton.setTextColor(getColor(R.color.grey_button_text));
-        savedButton.setTextColor(getColor(R.color.black));
-        resultsButtonUnderline.setBackgroundColor(getColor(R.color.transparent));
-        savedButtonUnderline.setBackgroundColor(getColor(R.color.primary));
         buildSaved();
+        if (saved != null) {
+            if (saved.length != 0) {
+                infoScreen.setVisibility(View.GONE);
+                answerListView.setVisibility(View.GONE);
+                savedListView.setVisibility(View.VISIBLE);
+                resultsButton.setTextColor(getColor(R.color.grey_button_text));
+                savedButton.setTextColor(getColor(R.color.black));
+                resultsButtonUnderline.setBackgroundColor(getColor(R.color.transparent));
+                savedButtonUnderline.setBackgroundColor(getColor(R.color.primary));
+            } else {
+                infoScreen.setVisibility(View.VISIBLE);
+                answerListView.setVisibility(View.GONE);
+                savedListView.setVisibility(View.GONE);
+                resultsButton.setTextColor(getColor(R.color.grey_button_text));
+                savedButton.setTextColor(getColor(R.color.black));
+                resultsButtonUnderline.setBackgroundColor(getColor(R.color.transparent));
+                savedButtonUnderline.setBackgroundColor(getColor(R.color.primary));
+                infoTextView.setText(getText(R.string.saved_empty));
+            }
+        } else {
+            infoScreen.setVisibility(View.VISIBLE);
+            answerListView.setVisibility(View.GONE);
+            savedListView.setVisibility(View.GONE);
+            resultsButton.setTextColor(getColor(R.color.grey_button_text));
+            savedButton.setTextColor(getColor(R.color.black));
+            resultsButtonUnderline.setBackgroundColor(getColor(R.color.transparent));
+            savedButtonUnderline.setBackgroundColor(getColor(R.color.primary));
+            infoTextView.setText(getText(R.string.saved_empty));
+        }
     }
 
     private void openSettings() {
@@ -677,6 +746,14 @@ public class MainActivity extends AppCompatActivity {
     private void closeSettings() {
         settingsScreen.setVisibility(View.GONE);
         mainScreen.setVisibility(View.VISIBLE);
+    }
+
+    private void checkFirstRelease() {
+        if (firstRelease) {
+            buttonSettings.setVisibility(View.GONE);
+            showAds = false;
+            fullVersionUpdateUI = true;
+        }
     }
 
     // IO
@@ -785,61 +862,70 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void queryCalories() {
-        infoMessage = getString(R.string.working);
-        showInfo = true;
-        String questionText = question.getText().toString();
-        hideKeyboard();
-        if (!questionText.isEmpty()) {
-            hideKeyboard();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                infoMessage = getString(R.string.working);
+                showInfo = true;
+                String questionText = question.getText().toString();
+                hideKeyboard();
+                if (!questionText.isEmpty()) {
+                    hideKeyboard();
 
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url("https://api.calorieninjas.com/v1/nutrition?query=" + questionText)
-                    .addHeader("X-Api-Key","TgFfSH3VsxyNdR3Hger92A==It0gCuSjAYjSyGuS")
-                    .build();
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url("https://api.calorieninjas.com/v1/nutrition?query=" + questionText)
+                            .addHeader("X-Api-Key","TgFfSH3VsxyNdR3Hger92A==It0gCuSjAYjSyGuS")
+                            .build();
 
-            try {
-                Response response = client.newCall(request).execute();
-                if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    JSONObject jObject = new JSONObject(responseBody);
-                    JSONArray jArray = jObject.getJSONArray("items");
-                    JSONObject item;
+                    try {
+                        Response response = client.newCall(request).execute();
+                        if (response.isSuccessful()) {
+                            String responseBody = response.body().string();
+                            JSONObject jObject = new JSONObject(responseBody);
+                            JSONArray jArray = jObject.getJSONArray("items");
+                            JSONObject item;
 
-                    queryAnswerRaw = new String[jArray.length()];
+                            answers = new String[jArray.length()];
 
-                    if (queryAnswerRaw.length == 0) {
-                        infoMessage = getString(R.string.not_found);
+                            if (answers.length == 0) {
+                                infoMessage = getString(R.string.not_found);
+                                showInfo = true;
+                            }
+
+                            for (int i = 0; i < jArray.length(); i ++) {
+                                item = jArray.getJSONObject(i);
+
+                                answers[i] = item.getString("name") + "," +
+                                        item.getString("calories") + "," +
+                                        item.getString("serving_size_g") + "," +
+                                        item.getString("sugar_g") + "," +
+                                        item.getString("fiber_g") + "," +
+                                        item.getString("sodium_mg") + "," +
+                                        item.getString("potassium_mg") + "," +
+                                        item.getString("fat_saturated_g") + "," +
+                                        item.getString("fat_total_g") + "," +
+                                        item.getString("cholesterol_mg") + "," +
+                                        item.getString("carbohydrates_total_g") + "," +
+                                        item.getString("protein_g");
+                            }
+                            timeToBuildAnswer = true;
+                        } else {
+                            infoMessage = getString(R.string.something_wrong);
+                            showInfo = true;
+                        }
+                    } catch (Exception e) {
+                        infoMessage = getString(R.string.something_wrong);
                         showInfo = true;
+                        System.out.println(TAG + "{queryCalories} " + e.getMessage());
                     }
-
-                    for (int i = 0; i < jArray.length(); i ++) {
-                        item = jArray.getJSONObject(i);
-
-                        queryAnswerRaw[i] = item.getString("name") + "," +
-                                            item.getString("calories") + "," +
-                                            item.getString("serving_size_g") + "," +
-                                            item.getString("sugar_g") + "," +
-                                            item.getString("fiber_g") + "," +
-                                            item.getString("sodium_mg") + "," +
-                                            item.getString("potassium_mg") + "," +
-                                            item.getString("fat_saturated_g") + "," +
-                                            item.getString("fat_total_g") + "," +
-                                            item.getString("cholesterol_mg") + "," +
-                                            item.getString("carbohydrates_total_g") + "," +
-                                            item.getString("protein_g");
-                    }
-                    timeToBuildAnswer = true;
                 } else {
-                    infoMessage = getString(R.string.something_wrong);
+                    infoMessage = getString(R.string.empty);
                     showInfo = true;
                 }
-            } catch (Exception e) {
-                infoMessage = getString(R.string.something_wrong);
-                showInfo = true;
-                System.out.println(TAG + "{queryCalories} " + e.getMessage());
             }
-        }
+        });
     }
 
     // Ads

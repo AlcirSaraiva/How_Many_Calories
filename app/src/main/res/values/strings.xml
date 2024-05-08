@@ -28,4 +28,9 @@
     <string name="working">Working…</string>
     <string name="not_found">Not found :(</string>
     <string name="something_wrong">Something went wrong :(</string>
+
+    <string name="results_empty">After entering a food, dish or ingredients in the field above and tapping the \"How many calories?\" button, the results will show here.</string>
+    <string name="saved_empty">In each item in the Results tab, when you tap the \"Save\" button the item will be stored here for later access.</string>
+    <string name="enter_items_here">enter items here</string>
+
 </resources>
