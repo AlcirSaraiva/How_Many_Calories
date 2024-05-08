@@ -13,7 +13,7 @@
     <string name="text_no_ads">No more ADS</string>
     <string name="text_manage_subscription">Subscription</string>
 
-    <string name="question">Try entering a food,\ndish or even list of ingredients</string>
+    <string name="question">Try entering a food,\ndish or even a list of ingredients</string>
     <string name="question_button">How many calories?</string>
     <string name="answer">answer will show here</string>
     <string name="empty">Empty field :-(</string>
