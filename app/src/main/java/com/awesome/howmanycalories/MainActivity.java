@@ -97,6 +97,7 @@ import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.m
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.HttpPost;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -112,6 +113,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -146,6 +148,8 @@ public class MainActivity extends AppCompatActivity {
     private String filesPath, saveFile = "data.txt";
     private String infoMessage = "";
     private boolean firstRelease = false;
+    private String remoteData = null;
+    private boolean rebuildAppsList = false;
 
     // ui
     private RelativeLayout rootView, contentView, splashScreen;
@@ -194,6 +198,8 @@ public class MainActivity extends AppCompatActivity {
         displayMetrics = context.getResources().getDisplayMetrics();
         filesPath = context.getExternalFilesDir(null).getAbsolutePath();
         prepareNetwork();
+
+        loadAllMyApps();
 
         assignViews();
         assignViewListeners();
@@ -267,6 +273,13 @@ public class MainActivity extends AppCompatActivity {
             infoScreen.setVisibility(View.VISIBLE);
             infoTextView.setText(infoMessage);
             question.clearFocus();
+        }
+        if (rebuildAppsList) {
+            rebuildAppsList = false;
+            String[] apps = remoteData.split("\n");
+            AppsListAdapter appsListAdapter = new AppsListAdapter(context, R.layout.apps_list, apps);
+            ListView appsList = findViewById(R.id.apps_list_view);
+            appsList.setAdapter(appsListAdapter);
         }
     }
 
@@ -744,6 +757,93 @@ public class MainActivity extends AppCompatActivity {
     private void openSettings() {
         settingsScreen.setVisibility(View.VISIBLE);
         mainScreen.setVisibility(View.GONE);
+        buildMyAppsSection();
+    }
+
+    private void buildMyAppsSection() {
+        if (remoteData == null) remoteData = "";
+        String[] apps = remoteData.split("\n");
+        AppsListAdapter appsListAdapter = new AppsListAdapter(context, R.layout.apps_list, apps);
+        ListView appsList = findViewById(R.id.apps_list_view);
+        appsList.setAdapter(appsListAdapter);
+    }
+
+    public class AppsListAdapter extends ArrayAdapter {
+        private Context ctx;
+        private String[] appsRaw;
+        private int resource;
+        private ImageButton icon;
+        private Button title, description;
+
+        public AppsListAdapter(@NonNull Context ctx, int resource, String[] appsRaw) {
+            super(ctx, resource, appsRaw);
+            this.ctx = ctx;
+            this.appsRaw = appsRaw;
+            this.resource = resource;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) convertView = LayoutInflater.from(ctx).inflate(resource, parent, false);
+
+            try {
+                icon = convertView.findViewById(R.id.icon);
+                title = convertView.findViewById(R.id.title);
+                description = convertView.findViewById(R.id.description);
+
+                String[] temp = appsRaw[position].split("<!fs!>");
+
+                if (temp.length == 3) {
+                    Picasso.get().load("https://onenice.monster/awesomerobot/apps/" + temp[0] + ".png").into(icon);
+                    title.setText(temp[1]);
+                    description.setText(temp[2]);
+
+                    icon.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setData(Uri.parse("market://details?id=com.awesome." + temp[0]));
+                                intent.setPackage("com.android.vending");
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                System.out.println(TAG + "{AppsListAdapter getView() onClick()} " + e.getMessage());
+                            }
+                        }
+                    });
+                    title.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setData(Uri.parse("market://details?id=com.awesome." + temp[0]));
+                                intent.setPackage("com.android.vending");
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                System.out.println(TAG + "{AppsListAdapter getView() onClick()} " + e.getMessage());
+                            }
+                        }
+                    });
+                    description.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setData(Uri.parse("market://details?id=com.awesome." + temp[0]));
+                                intent.setPackage("com.android.vending");
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                System.out.println(TAG + "{AppsListAdapter getView() onClick()} " + e.getMessage());
+                            }
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                System.out.println(TAG + "{AppsListAdapter getView()} " + e.getMessage());
+            }
+
+            return convertView;
+        }
     }
 
     private void closeSettings() {
@@ -830,6 +930,35 @@ public class MainActivity extends AppCompatActivity {
         }
 
         writeFile(newData);
+    }
+
+    private void loadAllMyAppsLocally() {
+        File file = new File(context.getExternalFilesDir(null).getAbsolutePath() + File.separator + "apps.txt");
+        int length = (int) file.length();
+        byte[] bytes = new byte[length];
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream(file);
+            fileInputStream.read(bytes);
+            fileInputStream.close();
+            remoteData = new String(bytes);
+        } catch (Exception e) {
+            System.out.println(TAG + "{loadAllMyAppsLocally} " + e.getMessage());
+        }
+    }
+
+    private void saveAllMyAppsLocally() {
+        String path = context.getExternalFilesDir(null).getAbsolutePath();
+        File file = new File(path, "apps.txt");
+
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(remoteData.getBytes());
+            fileOutputStream.close();
+        } catch (Exception e) {
+            System.out.println(TAG + "{saveAllMyAppsLocally} " + e.getMessage());
+        }
     }
 
     // network
@@ -926,6 +1055,32 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     infoMessage = getString(R.string.empty);
                     showInfo = true;
+                }
+            }
+        });
+    }
+
+    private void loadAllMyApps() {
+        loadAllMyAppsLocally();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("https://onenice.monster/awesomerobot/apps/apps.txt");
+                    URLConnection connection = url.openConnection();
+                    InputStream inputStream = connection.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    remoteData = "";
+                    String remoteLine;
+                    while ((remoteLine = bufferedReader.readLine()) != null) {
+                        remoteData += remoteLine + "\n";
+                    }
+                    bufferedReader.close();
+                    saveAllMyAppsLocally();
+                    rebuildAppsList = true;
+                } catch (Exception e) {
+                    System.out.println(TAG + "{readOnlineApps()} " + e.getMessage());
                 }
             }
         });

@@ -10,8 +10,8 @@ android {
         applicationId = "com.awesome.howmanycalories"
         minSdk = 24
         targetSdk = 34
-        versionCode = 102
-        versionName = "1.02"
+        versionCode = 103
+        versionName = "1.03"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.billing)
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.okhttp)
+    implementation(libs.picasso)
 
     implementation(libs.appcompat)
     implementation(libs.material)
