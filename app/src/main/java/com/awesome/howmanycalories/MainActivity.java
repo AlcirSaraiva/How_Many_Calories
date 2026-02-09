@@ -1008,7 +1008,7 @@ public class MainActivity extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient();
                     Request request = new Request.Builder()
                             .url("https://api.calorieninjas.com/v1/nutrition?query=" + questionText)
-                            .addHeader("X-Api-Key","TgFfSH3VsxyNdR3Hger92A==It0gCuSjAYjSyGuS")
+                            .addHeader("X-Api-Key","API_KEY_GOES_HERE")
                             .build();
 
                     try {
